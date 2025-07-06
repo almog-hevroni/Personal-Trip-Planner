@@ -15,14 +15,14 @@ export default function Dashboard() {
 
   return (
     <div className="container" style={{ maxWidth: "400px", padding: "2rem 0" }}>
-      <h1 className="heading-xl mb-2">שלום, {user?.name}</h1>
+      <h1 className="heading-xl mb-2">Hello {user?.name}</h1>
 
       <Button
         variant="primary"
         onClick={() => nav("/trips")}
         style={{ width: "100%", marginBottom: "1rem" }}
       >
-        היסטוריית מסלולים
+        Trip History 
       </Button>
 
       <Button
@@ -30,7 +30,7 @@ export default function Dashboard() {
         onClick={() => nav("/planner")}
         style={{ width: "100%" }}
       >
-        צור מסלול
+        Create a New Trip 
       </Button>
     </div>
   );

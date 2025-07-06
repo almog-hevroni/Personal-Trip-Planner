@@ -28,13 +28,13 @@ export default function TripDetails() {
   if (!trip) {
     return (
       <div className="container text-center mt-2">
-        <p>אין מסלול להצגה.</p>
+        <p>No route to show.</p>
         <Button
           variant="primary"
           onClick={() => nav("/dashboard")}
           style={{ marginTop: "1rem" }}
         >
-          חזור לדף הבית
+          Back to Home Page
         </Button>
       </div>
     );
@@ -44,10 +44,10 @@ export default function TripDetails() {
     setSaving(true);
     try {
       await api.post("/trips", { ...trip, title, description });
-      window.alert("המסלול נשמר!");
+      window.alert("The trip was saved successfully!");
       nav("/trips");
     } catch {
-      window.alert("שגיאה בשמירה");
+      window.alert("An error accured, the trip wasn't saved.");
     } finally {
       setSaving(false);
     }
@@ -58,12 +58,12 @@ export default function TripDetails() {
       {/* 1. כתיבת כותרת */}
       <div className="card mb-2">
         <div className="card-body">
-          <FormGroup label="שם המסלול" required>
+          <FormGroup label="Trip Name" required>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="הכנס שם למסלול"
+              placeholder="Enter Trip Name"
               required
             />
           </FormGroup>
@@ -73,11 +73,11 @@ export default function TripDetails() {
       {/* 2. תיאור קצר */}
       <div className="card mb-2">
         <div className="card-body">
-          <FormGroup label="תיאור קצר" required>
+          <FormGroup label="Description" required>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="הכנס תיאור קצר למסלול"
+              placeholder="Write a short description of the trip"
               rows={2}
               required
             />
@@ -87,7 +87,7 @@ export default function TripDetails() {
 
       {/* 3. סוג המסלול */}
       <p className="mb-2">
-        <strong>סוג:</strong> {trip.type}
+        <strong>Type:</strong> {trip.type}
       </p>
 
       {/* 4. מפה */}
@@ -101,28 +101,28 @@ export default function TripDetails() {
       <div className="card mb-2">
         <div className="card-body">
           <p>
-            <strong>נקודת מוצא:</strong> {trip.startingPoint}
+            <strong>Starting Point:</strong> {trip.startingPoint}
           </p>
           <p>
-            <strong>נקודת סיום:</strong> {trip.endingPoint}
+            <strong>Ending Point:</strong> {trip.endingPoint}
           </p>
         </div>
       </div>
 
       {/* 6. אורך כולל */}
       <p className="mb-2">
-        <strong>אורך כולל:</strong> {trip.totalLengthKm} ק"מ
+        <strong>Total Length:</strong> {trip.totalLengthKm} km
       </p>
 
       {/* 7. פירוט יומי */}
       {trip.days.map((d) => (
         <div key={d.day} className="card mb-2">
           <div className="card-body">
-            <h2 className="heading-md mb-1">יום {d.day}</h2>
-            <p>אורך: {d.lengthKm} ק"מ</p>
-            <p>התחלה: {d.startingPoint}</p>
-            <p>סיום: {d.endingPoint}</p>
-            <p className="mt-1">תיאור: {d.description}</p>
+            <h2 className="heading-md mb-1">Day {d.day}</h2>
+            <p>Length: {d.lengthKm} km</p>
+            <p>Starting Poind: {d.startingPoint}</p>
+            <p>Ending Point: {d.endingPoint}</p>
+            <p className="mt-1">Description: {d.description}</p>
           </div>
         </div>
       ))}
@@ -130,21 +130,21 @@ export default function TripDetails() {
       {/* 8. מזג אוויר */}
       <div className="card mb-2">
         <div className="card-body">
-          <h2 className="heading-md mb-1">מזג אוויר</h2>
+          <h2 className="heading-md mb-1">Weather</h2>
 
           {trip.weather?.forecast?.length ? (
             trip.weather.forecast.map((f) => (
               <div key={f.dayOffset} className="mb-1">
                 <p>
-                  יום {f.dayOffset}: {f.condition}
+                  Day {f.dayOffset}: {f.condition}
                 </p>
                 <p>
-                  טמפרטורה: {f.minTempC}°–{f.maxTempC}°
+                  Tempreture: {f.minTempC}°–{f.maxTempC}°
                 </p>
               </div>
             ))
           ) : (
-            <p>טרם זמין</p>
+            <p>Not available yet</p>
           )}
         </div>
       </div>
@@ -155,7 +155,7 @@ export default function TripDetails() {
           <div className="card-body">
             <img
               src={trip.imageUrl}
-              alt="תמונת המסלול"
+              alt="Trip Picture"
               style={{ maxHeight: "300px", width: "auto" }}
             />
           </div>
@@ -170,7 +170,7 @@ export default function TripDetails() {
           disabled={saving}
           style={{ width: "100%", marginBottom: "1rem" }}
         >
-          {saving ? "שומר..." : "שמור מסלול"}
+          {saving ? "Saving..." : "Save Trip"}
         </Button>
       )}
       <Button
@@ -178,7 +178,7 @@ export default function TripDetails() {
         onClick={() => nav("/dashboard")}
         style={{ width: "100%" }}
       >
-        חזור לדף הבית
+        Back To Home Page
       </Button>
     </div>
   );

@@ -32,14 +32,14 @@ export default function Login() {
       login(data.token, data.user);
       nav("/dashboard");
     } catch (err) {
-      window.alert(err.response?.data?.message || "שגיאת התחברות");
+      window.alert(err.response?.data?.message || "Error Loging In");
     }
   };
 
   return (
     <div className={styles.loginPage}>
       {/* כותרת קטנה יותר עם מרווח למעלה */}
-      <h1 className={styles.heading}>התחברות</h1>
+      <h1 className={styles.heading}>Log In</h1>
 
       {/* עוטף את הטופס כדי לדחוף אותו למטה */}
       <div className={styles.formWrapper}>

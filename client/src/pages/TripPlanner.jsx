@@ -28,7 +28,7 @@ export default function TripPlanner() {
       const { data } = await api.post("/trips/generate", { location, type });
       nav("/trip", { state: { trip: data } });
     } catch {
-      window.alert("שגיאת יצירת מסלול");
+      window.alert("Error creating a trip.");
     } finally {
       setLoading(false);
     }
@@ -37,23 +37,23 @@ export default function TripPlanner() {
   return (
     <div className="container mt-2" style={{ maxWidth: "400px" }}>
       <h1 className="heading-xl text-center mb-2">
-        {token ? "צור מסלול חדש" : "Trip Planner (אורח)"}
+        {token ? "Create new trip" : "Trip Planner"}
       </h1>
       <form onSubmit={handleGenerate}>
         <InputField
-          label="מקום (עיר/מדינה)"
+          label="Location(Country/City)"
           value={location}
           onChange={setLocation}
           required
         />
-        <FormGroup label="סוג טיול" required>
+        <FormGroup label="Trip type" required>
           <select
             value={type}
             onChange={(e) => setType(e.target.value)}
             className="form-group-select"
           >
-            <option value="bike">אופניים</option>
-            <option value="trek">טרק</option>
+            <option value="bike">Bicycle</option>
+            <option value="track">Track</option>
           </select>
         </FormGroup>
         <Button
@@ -62,7 +62,7 @@ export default function TripPlanner() {
           disabled={loading || !location}
           style={{ width: "100%", marginTop: "1rem" }}
         >
-          {loading ? "טוען…" : "צור מסלול"}
+          {loading ? "Loading..." : "Create Trip Plan"}
         </Button>
       </form>
     </div>

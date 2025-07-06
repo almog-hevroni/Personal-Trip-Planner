@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import MyTrips from "./pages/MyTrips";
 import TripDetails from "./pages/TripDetails";
 import ProtectedRoute from "./components/guard/ProtectedRoute";
+import HistoryTripDetails from "./pages/HistoryTripDetails"
 
 export default function App() {
   const { pathname } = useLocation();
@@ -43,6 +44,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <MyTrips />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/trips/:tripId"
+          element={
+            <ProtectedRoute>
+              <HistoryTripDetails />
             </ProtectedRoute>
           }
         />

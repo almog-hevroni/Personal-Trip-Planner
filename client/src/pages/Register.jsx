@@ -21,27 +21,27 @@ export default function Register() {
     e.preventDefault();
     try {
       await api.post("/auth/register", { name, email, password });
-      window.alert("נרשמת בהצלחה!");
+      window.alert("Registered Successfully!");
       nav("/login");
     } catch (err) {
-      window.alert(err.response?.data?.message || "שגיאה ברישום");
+      window.alert(err.response?.data?.message || "Error Regitering");
     }
   };
 
   return (
     <div className="container mt-2" style={{ maxWidth: "400px" }}>
-      <h1 className="heading-xl text-center mb-2">הרשמה</h1>
+      <h1 className="heading-xl text-center mb-2">Register</h1>
       <form onSubmit={handleSubmit}>
-        <InputField label="שם מלא" value={name} onChange={setName} required />
+        <InputField label="Full Name" value={name} onChange={setName} required />
         <InputField
-          label="אימייל"
+          label="Email"
           type="email"
           value={email}
           onChange={setEmail}
           required
         />
         <InputField
-          label="סיסמה"
+          label="Password"
           type="password"
           value={password}
           onChange={setPassword}
@@ -52,7 +52,7 @@ export default function Register() {
           variant="primary"
           style={{ width: "100%", marginTop: "1rem" }}
         >
-          הרשם
+          Register
         </Button>
       </form>
     </div>

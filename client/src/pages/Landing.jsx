@@ -33,7 +33,7 @@ export default function Landing() {
           onClick={() => nav("/login")}
           style={{ maxWidth: "300px", width: "100%" }}
         >
-          התחברות
+          Log In
         </Button>
 
         <Button
@@ -47,15 +47,7 @@ export default function Landing() {
             border: "1px solid var(--clr-primary)",
           }}
         >
-          יצירת משתמש
-        </Button>
-
-        <Button
-          variant="secondary"
-          onClick={() => nav("/planner")}
-          style={{ maxWidth: "300px", width: "100%" }}
-        >
-          צור מסלול ללא התחברות
+          Register
         </Button>
       </div>
     </div>

@@ -1,6 +1,7 @@
 // client/src/pages/MyTrips.jsx
 import React, { useEffect, useState } from "react";
 import useApi from "../hooks/useApi";
+import { useNavigate } from "react-router-dom";
 
 import "../styles/layout.css";
 import "../styles/typography.css";
@@ -8,11 +9,13 @@ import "../styles/utilities.css";
 import "../styles/components/card.css";
 import "../styles/components/button.css";
 
+
 import Button from "../components/ui/Button";
 
 export default function MyTrips() {
   const [trips, setTrips] = useState([]);
   const api = useApi();
+  const nav = useNavigate();
 
   useEffect(() => {
     async function fetchTrips() {
@@ -20,28 +23,26 @@ export default function MyTrips() {
         const { data } = await api.get("/trips");
         setTrips(data);
       } catch {
-        window.alert("שגיאה בשליפת מסלולים");
+        window.alert("Error fetching trips.");
       }
     }
     fetchTrips();
-  }, [api]);
+  }, []);
 
   return (
     <div className="container mt-2">
-      <h1 className="heading-xl mb-2">היסטוריית מסלולים</h1>
+      <h1 className="heading-xl mb-2">Trips History</h1>
       <div className="grid-2col">
         {trips.map((trip) => (
-          <div key={trip.id} className="card">
+          <div key={trip._id} className="card">
             <div className="card-body">
-              <h2 className="mb-1">{trip.title || `מסלול #${trip.id}`}</h2>
-              <p className="mb-1">{trip.description || "אין תיאור"}</p>
+              <h2 className="mb-1">{trip.title || `Trip #${trip._id}`}</h2>
+              <p className="mb-1">{trip.description || "No Description"}</p>
               <Button
                 variant="primary"
-                onClick={() => {
-                  // TODO: נווט לעמוד פרטי המסלול
-                }}
+                onClick={() => nav(`/trips/${trip._id}`)}
               >
-                פרטים
+                Show Details
               </Button>
             </div>
           </div>

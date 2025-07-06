@@ -12,7 +12,7 @@ export default function LoginForm({
 }) {
   return (
     <form onSubmit={onSubmit}>
-      <FormGroup label="אימייל" required>
+      <FormGroup label="Email" required>
         <input
           type="email"
           value={email}
@@ -21,7 +21,7 @@ export default function LoginForm({
         />
       </FormGroup>
 
-      <FormGroup label="סיסמה" required>
+      <FormGroup label="Password" required>
         <input
           type="password"
           value={password}
@@ -31,7 +31,7 @@ export default function LoginForm({
       </FormGroup>
 
       <Button type="submit" variant="primary" style={{ width: "100%" }}>
-        התחבר
+        Log In
       </Button>
     </form>
   );

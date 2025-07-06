@@ -24,7 +24,7 @@ const openai = new OpenAI({
  *           type: string
  *         type:
  *           type: string
- *           enum: [bike, trek]
+ *           enum: [bike, track]
  *         description:
  *           type: string
  *         startingPoint:
@@ -101,6 +101,61 @@ router.get("/", authenticateToken, async (req, res) => {
   } catch (err) {
     console.error("Fetch trips error:", err);
     res.status(500).json({ message: "Failed to fetch trips" });
+  }
+});
+
+/**
+ * @openapi
+ * /api/trips/{id}:
+ *   get:
+ *     summary: Get a single trip by its ID, enriched with a 3-day weather forecast
+ *     tags: [Trips]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The MongoDB ObjectId of the trip
+ *     responses:
+ *       200:
+ *         description: Trip retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Trip'
+ *       401:
+ *         description: Invalid or missing JWT
+ *       404:
+ *         description: Trip not found
+ *       500:
+ *         description: Server error
+ */
+router.get("/:id", authenticateToken, async (req, res) => {
+  try {
+    const trip = await Trip.findById(req.params.id).lean();
+    if (!trip) return res.status(404).json({ message: "Trip not found" });
+
+    // if there's at least one route point, fetch weather
+    if (Array.isArray(trip.route) && trip.route.length > 0) {
+      const { lat, lng } = trip.route[0];
+      try {
+        const weather = await fetchWeather(lat, lng);
+        trip.weather = weather;
+      } catch (err) {
+        console.warn("weather API failed:", err.message);
+        trip.weather = { forecast: [] };
+      }
+    } else {
+      trip.weather = { forecast: [] };
+    }
+
+    res.json(trip);
+  } catch (err) {
+    console.error("Fetch single trip error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
@@ -186,7 +241,7 @@ router.post("/", authenticateToken, async (req, res) => {
  *                 type: string
  *               type:
  *                 type: string
- *                 enum: [bike, trek]
+ *                 enum: [bike, track]
  *     responses:
  *       200:
  *         description: Generated trip object with detailed daily breakdown
@@ -208,7 +263,7 @@ Generate a ${type} trip for "${location}", broken down by day, with map-ready ge
 
 Rules:
 - If type is "bike": exactly 2 consecutive days; each day ≤ 60 km; total ≤ 120 km.
-- If type is "trek": 3 or more days; each day 5–15 km; the trip must form a loop (startingPoint = endingPoint).
+- If type is "track": 3 or more days; each day 5–15 km; the trip must form a loop (startingPoint = endingPoint).
 
 Return exactly one JSON object (no markdown, no commentary):
 {
