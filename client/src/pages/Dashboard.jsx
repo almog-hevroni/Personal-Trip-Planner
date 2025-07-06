@@ -1,24 +1,37 @@
-import { Box, Heading, Button, VStack } from "@chakra-ui/react";
+// client/src/pages/Dashboard.jsx
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+
+import "../styles/layout.css";
+import "../styles/typography.css";
+import "../styles/utilities.css";
+import "../styles/components/button.css";
+
+import Button from "../components/ui/Button";
 
 export default function Dashboard() {
   const { user } = useAuth();
   const nav = useNavigate();
 
   return (
-    <Box p={8}>
-      <VStack spacing={6} maxW="sm" mx="auto">
-        <Heading>שלום, {user.name}</Heading>
+    <div className="container" style={{ maxWidth: "400px", padding: "2rem 0" }}>
+      <h1 className="heading-xl mb-2">שלום, {user?.name}</h1>
 
-        <Button colorScheme="teal" w="full" onClick={() => nav("/trips")}>
-          היסטוריית מסלולים
-        </Button>
+      <Button
+        variant="primary"
+        onClick={() => nav("/trips")}
+        style={{ width: "100%", marginBottom: "1rem" }}
+      >
+        היסטוריית מסלולים
+      </Button>
 
-        <Button colorScheme="orange" w="full" onClick={() => nav("/planner")}>
-          צור מסלול
-        </Button>
-      </VStack>
-    </Box>
+      <Button
+        variant="secondary"
+        onClick={() => nav("/planner")}
+        style={{ width: "100%" }}
+      >
+        צור מסלול
+      </Button>
+    </div>
   );
 }

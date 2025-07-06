@@ -1,25 +1,26 @@
+// client/src/main.jsx
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-// ייבוא ChakraProvider ו־extendTheme מתוך @chakra-ui/react
-import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import "leaflet/dist/leaflet.css";
+
+import "./styles/reset.css";
+import "./styles/variables.css";
+import "./styles/globals.css";
+import "./styles/typography.css";
+import "./styles/layout.css";
+import "./styles/utilities.css";
 
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { AuthProvider } from "./contexts/AuthContext";
-import "leaflet/dist/leaflet.css";
-
-// גם אם אין לך התאמות, אופציונלית להגדיר theme ריק:
-const theme = extendTheme({});
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <ChakraProvider theme={theme}>
-      <BrowserRouter>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </BrowserRouter>
-    </ChakraProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );

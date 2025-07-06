@@ -1,0 +1,39 @@
+/* client/src/styles/pages/login.module.css */
+
+/* 1. wrapper של הלוגין – דוחף את הכותרת + הטופס למטה */
+.loginPage {
+  width: 100%;
+  max-width: 400px;
+  margin: 4rem auto 0; /* דוחף למטה ומרכז אופקית */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 2. כותרת קטנה יותר */
+.heading {
+  font-size: 3rem;
+  margin: 0 0 1.5rem;
+  text-align: center;
+}
+
+/* 3. איפוס ה־margin-top של הטופס עצמו */
+.formWrapper {
+  width: 100%;
+  margin-top: 2rem; /* דוחף את כל הטופס למטה */
+}
+
+/* 4. מקל על סידור השדות + הכפתור בתור column עם ריווח אוטומטי */
+.formWrapper form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem; /* ריווח בין כל השדות והכפתור */
+}
+
+/* 5. מרכז את הכפתור רוחבית ומגביל את הרוחב שלו */
+.formWrapper form button {
+  align-self: center;
+  width: 100%;
+  max-width: 250px;
+}

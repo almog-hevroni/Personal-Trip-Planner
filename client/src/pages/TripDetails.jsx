@@ -1,172 +1,185 @@
 // client/src/pages/TripDetails.jsx
-
 import React, { useState } from "react";
-import {
-  Box,
-  Heading,
-  Button,
-  VStack,
-  Text,
-  Image,
-  Input,
-  Textarea,
-  useToast,
-} from "@chakra-ui/react";
 import { useLocation, useNavigate } from "react-router-dom";
-import Map from "../components/Map";
 import useApi from "../hooks/useApi";
 import { useAuth } from "../contexts/AuthContext";
+
+import Map from "../components/ui/Map";
+import InputField from "../components/ui/InputField";
+import FormGroup from "../components/ui/FormGroup";
+import Button from "../components/ui/Button";
+
+import "../styles/layout.css";
+import "../styles/typography.css";
+import "../styles/utilities.css";
+import "../styles/components/card.css";
 
 export default function TripDetails() {
   const { state } = useLocation();
   const trip = state?.trip;
   const { token } = useAuth();
   const api = useApi();
-  const toast = useToast();
   const nav = useNavigate();
-  const [saving, setSaving] = useState(false);
 
-  // חדש: סטייט מקומי לעריכת שם ותיאור
   const [title, setTitle] = useState(trip?.title || "");
   const [description, setDescription] = useState(trip?.description || "");
+  const [saving, setSaving] = useState(false);
 
   if (!trip) {
     return (
-      <Box p={8} textAlign="center">
-        <Text>אין מסלול להצגה.</Text>
-        <Button mt={4} onClick={() => nav("/dashboard")}>
+      <div className="container text-center mt-2">
+        <p>אין מסלול להצגה.</p>
+        <Button
+          variant="primary"
+          onClick={() => nav("/dashboard")}
+          style={{ marginTop: "1rem" }}
+        >
           חזור לדף הבית
         </Button>
-      </Box>
+      </div>
     );
   }
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      // שולחים את כל האובייקט עם השדות המעודכנים title ו-description
-      await api.post("/trips", {
-        ...trip,
-        title,
-        description,
-      });
-      toast({ status: "success", description: "המסלול נשמר!" });
+      await api.post("/trips", { ...trip, title, description });
+      window.alert("המסלול נשמר!");
       nav("/trips");
-    } catch (err) {
-      toast({
-        status: "error",
-        description: err.response?.data?.message || "שגיאה בשמירה",
-      });
+    } catch {
+      window.alert("שגיאה בשמירה");
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <Box p={8}>
-      <VStack spacing={6} maxW="4xl" mx="auto">
-        {/* 1. אפשרות לעריכת כותרת */}
-        <Box w="full" p={4} bg="gray.50" borderRadius="md">
-          <Text mb={2} fontWeight="semibold">
-            שם המסלול
-          </Text>
-          <Input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="הכנס שם למסלול"
-          />
-        </Box>
+    <div className="container mt-2" style={{ maxWidth: "800px" }}>
+      {/* 1. כתיבת כותרת */}
+      <div className="card mb-2">
+        <div className="card-body">
+          <FormGroup label="שם המסלול" required>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="הכנס שם למסלול"
+              required
+            />
+          </FormGroup>
+        </div>
+      </div>
 
-        {/* תיאור קצר */}
-        <Box w="full" p={4} bg="gray.50" borderRadius="md">
-          <Text mb={2} fontWeight="semibold">
-            תיאור קצר
-          </Text>
-          <Textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="הכנס תיאור קצר למסלול"
-            rows={2}
-          />
-        </Box>
+      {/* 2. תיאור קצר */}
+      <div className="card mb-2">
+        <div className="card-body">
+          <FormGroup label="תיאור קצר" required>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="הכנס תיאור קצר למסלול"
+              rows={2}
+              required
+            />
+          </FormGroup>
+        </div>
+      </div>
 
-        {/* 2. סוג המסלול */}
-        <Text fontSize="lg" color="gray.600">
-          סוג: {trip.type}
-        </Text>
+      {/* 3. סוג המסלול */}
+      <p className="mb-2">
+        <strong>סוג:</strong> {trip.type}
+      </p>
 
-        {/* 3. מפה ריאלית */}
-        <Box w="full" h="400px">
+      {/* 4. מפה */}
+      <div className="card mb-2">
+        <div className="card-body" style={{ padding: 0 }}>
           <Map points={trip.route} />
-        </Box>
+        </div>
+      </div>
 
-        {/* 4-5. נקודת מוצא ונקודת סיום */}
-        <Box w="full">
-          <Text fontWeight="semibold">נקודת מוצא: {trip.startingPoint}</Text>
-          <Text fontWeight="semibold">נקודת סיום: {trip.endingPoint}</Text>
-        </Box>
+      {/* 5. נקודת מוצא וסיום */}
+      <div className="card mb-2">
+        <div className="card-body">
+          <p>
+            <strong>נקודת מוצא:</strong> {trip.startingPoint}
+          </p>
+          <p>
+            <strong>נקודת סיום:</strong> {trip.endingPoint}
+          </p>
+        </div>
+      </div>
 
-        {/* 6. אורך כולל */}
-        <Box w="full">
-          <Text fontWeight="bold">אורך כולל: {trip.totalLengthKm} ק"מ</Text>
-        </Box>
+      {/* 6. אורך כולל */}
+      <p className="mb-2">
+        <strong>אורך כולל:</strong> {trip.totalLengthKm} ק"מ
+      </p>
 
-        {/* 7. פירוט יומי */}
-        {trip.days.map((d) => (
-          <Box key={d.day} w="full" p={4} borderWidth="1px" borderRadius="md">
-            <Heading size="md">יום {d.day}</Heading>
-            <Text>אורך מסלול: {d.lengthKm} ק"מ</Text>
-            <Text>נקודת מוצא: {d.startingPoint}</Text>
-            <Text>נקודת סיום: {d.endingPoint}</Text>
-            <Text mt={2}>תיאור: {d.description}</Text>
-          </Box>
-        ))}
+      {/* 7. פירוט יומי */}
+      {trip.days.map((d) => (
+        <div key={d.day} className="card mb-2">
+          <div className="card-body">
+            <h2 className="heading-md mb-1">יום {d.day}</h2>
+            <p>אורך: {d.lengthKm} ק"מ</p>
+            <p>התחלה: {d.startingPoint}</p>
+            <p>סיום: {d.endingPoint}</p>
+            <p className="mt-1">תיאור: {d.description}</p>
+          </div>
+        </div>
+      ))}
 
-        {/* 8. מזג אוויר */}
-        <Box w="full" p={4} borderWidth="1px" borderRadius="md">
-          <Heading size="md" mb={2}>
-            מזג אוויר
-          </Heading>
-          {trip.weather?.forecasts?.map((f) => (
-            <Box key={f.day} mb={2}>
-              <Text>
-                יום {f.day}: {f.forecast}
-              </Text>
-              <Text>
-                טמפרטורה: {f.temperature.low}°–{f.temperature.high}°
-              </Text>
-            </Box>
-          )) || <Text>טרם זמין</Text>}
-        </Box>
+      {/* 8. מזג אוויר */}
+      <div className="card mb-2">
+        <div className="card-body">
+          <h2 className="heading-md mb-1">מזג אוויר</h2>
 
-        {/* 9. תמונה */}
-        {trip.imageUrl && (
-          <Box w="full" textAlign="center">
-            <Image
+          {trip.weather?.forecast?.length ? (
+            trip.weather.forecast.map((f) => (
+              <div key={f.dayOffset} className="mb-1">
+                <p>
+                  יום {f.dayOffset}: {f.condition}
+                </p>
+                <p>
+                  טמפרטורה: {f.minTempC}°–{f.maxTempC}°
+                </p>
+              </div>
+            ))
+          ) : (
+            <p>טרם זמין</p>
+          )}
+        </div>
+      </div>
+
+      {/* 9. תמונה */}
+      {trip.imageUrl && (
+        <div className="card mb-2 text-center">
+          <div className="card-body">
+            <img
               src={trip.imageUrl}
               alt="תמונת המסלול"
-              maxH="300px"
-              mx="auto"
-              borderRadius="md"
+              style={{ maxHeight: "300px", width: "auto" }}
             />
-          </Box>
-        )}
+          </div>
+        </div>
+      )}
 
-        {/* כפתורי שמירה וחזרה */}
-        {token && (
-          <Button
-            colorScheme="teal"
-            w="full"
-            onClick={handleSave}
-            isLoading={saving}
-          >
-            שמור מסלול
-          </Button>
-        )}
-        <Button variant="outline" w="full" onClick={() => nav("/dashboard")}>
-          חזור לדף הבית
+      {/* כפתורי שמירה וחזרה */}
+      {token && (
+        <Button
+          variant="primary"
+          onClick={handleSave}
+          disabled={saving}
+          style={{ width: "100%", marginBottom: "1rem" }}
+        >
+          {saving ? "שומר..." : "שמור מסלול"}
         </Button>
-      </VStack>
-    </Box>
+      )}
+      <Button
+        variant="secondary"
+        onClick={() => nav("/dashboard")}
+        style={{ width: "100%" }}
+      >
+        חזור לדף הבית
+      </Button>
+    </div>
   );
 }

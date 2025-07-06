@@ -1,0 +1,21 @@
+:root {
+  --font-base: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --line-height-base: 1.5;
+  --font-weight-base: 400;
+
+  --clr-text-dark: rgba(255, 255, 255, 0.87);
+  --clr-bg-dark: #242424;
+  --clr-primary: #5d62b3;
+  --clr-primary-hover: #535bf2;
+
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --clr-text-dark: #213547;
+    --clr-bg-dark: #ffffff;
+    --clr-primary-hover: #8489ea;
+    --clr-secondary: #f97316;
+  }
+}

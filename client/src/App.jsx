@@ -1,6 +1,8 @@
+// client/src/App.jsx
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
-import Navbar from "./components/Navbar";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+
+import Navbar from "./components/ui/Navbar";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -8,12 +10,16 @@ import TripPlanner from "./pages/TripPlanner";
 import Dashboard from "./pages/Dashboard";
 import MyTrips from "./pages/MyTrips";
 import TripDetails from "./pages/TripDetails";
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./components/guard/ProtectedRoute";
 
 export default function App() {
+  const { pathname } = useLocation();
+  const showNavbar = pathname !== "/";
+
   return (
     <>
-      <Navbar />
+      {showNavbar && <Navbar />}
+
       <Routes>
         {/* Landing */}
         <Route path="/" element={<Landing />} />

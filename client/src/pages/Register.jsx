@@ -1,22 +1,19 @@
-import {
-  Box,
-  Heading,
-  Button,
-  Input,
-  FormControl,
-  FormLabel,
-  VStack,
-  useToast,
-} from "@chakra-ui/react";
-import { useState } from "react";
+// client/src/pages/Register.jsx
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useApi from "../hooks/useApi";
+
+import "../styles/layout.css";
+import "../styles/typography.css";
+import "../styles/utilities.css";
+
+import InputField from "../components/ui/InputField";
+import Button from "../components/ui/Button";
 
 export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const toast = useToast();
   const api = useApi();
   const nav = useNavigate();
 
@@ -24,48 +21,40 @@ export default function Register() {
     e.preventDefault();
     try {
       await api.post("/auth/register", { name, email, password });
-      toast({ status: "success", description: "נרשמת בהצלחה!" });
+      window.alert("נרשמת בהצלחה!");
       nav("/login");
     } catch (err) {
-      toast({
-        status: "error",
-        description: err.response?.data?.message || "שגיאה",
-      });
+      window.alert(err.response?.data?.message || "שגיאה ברישום");
     }
   };
 
   return (
-    <Box maxW="md" mx="auto" mt={16} p={8} borderWidth="1px" borderRadius="lg">
-      <Heading mb={6} textAlign="center">
-        הרשמה
-      </Heading>
+    <div className="container mt-2" style={{ maxWidth: "400px" }}>
+      <h1 className="heading-xl text-center mb-2">הרשמה</h1>
       <form onSubmit={handleSubmit}>
-        <VStack spacing={4}>
-          <FormControl isRequired>
-            <FormLabel>שם מלא</FormLabel>
-            <Input value={name} onChange={(e) => setName(e.target.value)} />
-          </FormControl>
-          <FormControl isRequired>
-            <FormLabel>אימייל</FormLabel>
-            <Input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </FormControl>
-          <FormControl isRequired>
-            <FormLabel>סיסמה</FormLabel>
-            <Input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </FormControl>
-          <Button colorScheme="teal" type="submit" w="full">
-            הרשם
-          </Button>
-        </VStack>
+        <InputField label="שם מלא" value={name} onChange={setName} required />
+        <InputField
+          label="אימייל"
+          type="email"
+          value={email}
+          onChange={setEmail}
+          required
+        />
+        <InputField
+          label="סיסמה"
+          type="password"
+          value={password}
+          onChange={setPassword}
+          required
+        />
+        <Button
+          type="submit"
+          variant="primary"
+          style={{ width: "100%", marginTop: "1rem" }}
+        >
+          הרשם
+        </Button>
       </form>
-    </Box>
+    </div>
   );
 }

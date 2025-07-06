@@ -42,7 +42,6 @@ const tripSchema = new Schema(
 
     // שדות קיימים (route ו-points), משודרגים בהתאם:
     route: { type: [geoPointSchema], default: [] },
-    weather: { type: Schema.Types.Mixed, default: {} },
     imageUrl: { type: String },
   },
   { timestamps: true }

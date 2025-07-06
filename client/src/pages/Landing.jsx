@@ -1,8 +1,13 @@
-// src/pages/Landing.jsx
 import React, { useEffect } from "react";
-import { Box, Heading, Button, VStack } from "@chakra-ui/react";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+
+import "../styles/layout.css";
+import "../styles/typography.css";
+import "../styles/utilities.css";
+import styles from "../styles/pages/landing.module.css";
+
+import Button from "../components/ui/Button";
 
 export default function Landing() {
   const { token } = useAuth();
@@ -15,32 +20,44 @@ export default function Landing() {
   }, [token, nav]);
 
   return (
-    <Box
-      minH="100vh"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-    >
-      <VStack spacing={6} w="sm">
-        <Heading size="2xl" textAlign="center">
-          Trip Planner
-        </Heading>
-        <Button as={RouterLink} to="/login" colorScheme="teal" w="100%">
+    <div className={styles.landingPage}>
+      {/* כותרת באמצע אופקית, מתחת ל־Navbar */}
+      <div className={styles.headingWrapper}>
+        <h1 className="heading-xl">Trip Planner</h1>
+      </div>
+
+      {/* כפתורים מתחת לכותרת */}
+      <div className={styles.buttonsWrapper}>
+        <Button
+          variant="primary"
+          onClick={() => nav("/login")}
+          style={{ maxWidth: "300px", width: "100%" }}
+        >
           התחברות
         </Button>
+
         <Button
-          as={RouterLink}
-          to="/register"
-          variant="outline"
-          colorScheme="teal"
-          w="100%"
+          variant="primary"
+          onClick={() => nav("/register")}
+          style={{
+            maxWidth: "300px",
+            width: "100%",
+            background: "transparent",
+            color: "var(--clr-primary)",
+            border: "1px solid var(--clr-primary)",
+          }}
         >
           יצירת משתמש
         </Button>
-        <Button as={RouterLink} to="/planner" colorScheme="orange" w="100%">
+
+        <Button
+          variant="secondary"
+          onClick={() => nav("/planner")}
+          style={{ maxWidth: "300px", width: "100%" }}
+        >
           צור מסלול ללא התחברות
         </Button>
-      </VStack>
-    </Box>
+      </div>
+    </div>
   );
 }

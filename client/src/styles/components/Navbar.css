@@ -1,0 +1,31 @@
+.navbar {
+  position: sticky; /* נשאר תמיד למעלה */
+  top: 0;
+  left: 0;
+  width: 100%; /* ימלא את כל רוחב ה־root */
+  background: linear-gradient(
+    90deg,
+    #ffffff 70%,
+    #e0f7fa 100%
+  ); /* מעבר צבע עדין */
+  border-bottom: 1px solid var(--clr-border);
+  padding: 0.75rem 2rem; /* הגדלנו מרווחים */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 64px; /* גובה אחיד */
+  box-shadow: 0 2px 8px 0 #e0e0e080; /* צל עדין */
+}
+
+.navbar .nav-link {
+  color: var(--clr-text);
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 1rem; /* הגדלת הפונט */
+  padding-left: 0.3rem; /* מרחק מהקצה השמאלי */
+  transition: color 0.2s;
+}
+
+.navbar .nav-link:hover {
+  color: var(--clr-primary);
+}

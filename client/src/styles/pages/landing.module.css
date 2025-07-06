@@ -1,0 +1,24 @@
+/* src/styles/pages/landing.module.css */
+
+.landingPage {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding-top: 4rem; /* ריווח מתחת ל-Navbar */
+}
+
+.headingWrapper {
+  width: 100%;
+  text-align: center;
+  margin: 0 0 1rem; /* אין מרווח מעל, 1rem מתחת */
+}
+
+.buttonsWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 3rem; /* דוחף את הכפתורים עוד קצת למטה */
+}

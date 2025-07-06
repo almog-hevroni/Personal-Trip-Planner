@@ -3,6 +3,7 @@
 import express from "express";
 import Trip from "../models/Trip.js";
 import { authenticateToken } from "../middleware/authMiddleware.js";
+import { fetchWeather, fetchImage } from "../utils/externalData.js";
 import OpenAI from "openai";
 
 const router = express.Router();
@@ -136,10 +137,10 @@ router.post("/", authenticateToken, async (req, res) => {
     endingPoint,
     totalLengthKm,
     days,
-    weather,
     imageUrl,
     route,
   } = req.body;
+
   try {
     const trip = new Trip({
       userId: req.user.userId,
@@ -150,7 +151,6 @@ router.post("/", authenticateToken, async (req, res) => {
       endingPoint,
       totalLengthKm,
       days,
-      weather,
       imageUrl,
       route,
     });
@@ -202,53 +202,65 @@ router.post("/", authenticateToken, async (req, res) => {
 router.post("/generate", authenticateToken, async (req, res) => {
   const { location, type } = req.body;
 
+  /* 1️⃣  Build prompt – do NOT ask GPT for weather or images */
   const prompt = `
-Generate a ${type} trip for "${location}", broken down by day, with both geodata for the map and rich descriptions.
+Generate a ${type} trip for "${location}", broken down by day, with map-ready geodata and vivid descriptions.
 
 Rules:
 - If type is "bike": exactly 2 consecutive days; each day ≤ 60 km; total ≤ 120 km.
-- If type is "trek": a multi-day hike; each day between 5–15 km; the entire trip (from startingPoint to endingPoint) must form a loop—i.e., endingPoint must be identical to startingPoint.
+- If type is "trek": 3 or more days; each day 5–15 km; the trip must form a loop (startingPoint = endingPoint).
 
-Output only a single JSON object with these fields:
+Return exactly one JSON object (no markdown, no commentary):
 {
   "title": "<string>",
   "type": "${type}",
-  "route": [
-    { "lat": <number>, "lng": <number>, "day": 1 },
-    …
-  ],
+  "route": [ { "lat": <number>, "lng": <number>, "day": 1 }, … ],
   "startingPoint": "<string>",
   "endingPoint": "<string>",
   "totalLengthKm": <number>,
   "days": [
-    {
-      "day": 1,
-      "lengthKm": <number>,
-      "startingPoint": "<string>",
-      "endingPoint": "<string>",
-      "description": "<string>"
-    },
-    { "day": 2, … }
-  ],
-  "weather": { /* structure for forecast, temp, etc. */ },
-  "imageUrl": "<string>"
+    { "day": 1, "lengthKm": <number>, "startingPoint": "<string>", "endingPoint": "<string>", "description": "<string>" }
+    /* repeat for each day */
+  ]
 }
 
 If you cannot satisfy constraints, return:
-  { "error": "Could not generate trip with these constraints, please try again." }
+{ "error": "Could not generate trip with these constraints, please try again." }
 `;
 
   try {
+    /* 2️⃣  Get itinerary from OpenAI */
     const completion = await openai.chat.completions.create({
-      model: "gpt-4",
-      messages: [{ role: "user", content: prompt }],
+      model: "gpt-4o-mini", // or "gpt-4o"
+      messages: [
+        { role: "system", content: "You are a trip-itinerary generator." },
+        { role: "user", content: prompt },
+      ],
     });
-    const tripData = JSON.parse(completion.choices[0].message.content);
 
+    const tripData = JSON.parse(completion.choices[0].message.content);
     if (tripData.error) {
       return res.status(400).json({ message: tripData.error });
     }
 
+    /* 3️⃣  Enrich with free external data */
+    const { lat, lng } = tripData.route[0]; // first overnight stop
+
+    console.log("Fetching weather and image for:", location, lat, lng);
+
+    try {
+      const [weather, imageUrl] = await Promise.all([
+        fetchWeather(lat, lng),
+        fetchImage(location),
+      ]);
+      tripData.weather = weather;
+      tripData.imageUrl = imageUrl;
+    } catch (extErr) {
+      console.warn("External API error:", extErr.message);
+      tripData.imageUrl = "";
+    }
+
+    /* 4️⃣  Send to client (and let front-end decide whether to save) */
     return res.json(tripData);
   } catch (err) {
     console.error("AI generation error:", err);

@@ -1,56 +1,52 @@
 // client/src/pages/MyTrips.jsx
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Heading,
-  SimpleGrid,
-  Card,
-  CardBody,
-  Text,
-  Button,
-  useToast,
-} from "@chakra-ui/react";
 import useApi from "../hooks/useApi";
+
+import "../styles/layout.css";
+import "../styles/typography.css";
+import "../styles/utilities.css";
+import "../styles/components/card.css";
+import "../styles/components/button.css";
+
+import Button from "../components/ui/Button";
 
 export default function MyTrips() {
   const [trips, setTrips] = useState([]);
   const api = useApi();
-  const toast = useToast();
 
   useEffect(() => {
     async function fetchTrips() {
       try {
         const { data } = await api.get("/trips");
         setTrips(data);
-      } catch (err) {
-        toast({ status: "error", description: "שגיאה בשליפת מסלולים" });
+      } catch {
+        window.alert("שגיאה בשליפת מסלולים");
       }
     }
     fetchTrips();
-  }, []);
+  }, [api]);
 
   return (
-    <Box p={8}>
-      <Heading mb={6}>היסטוריית מסלולים</Heading>
-      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+    <div className="container mt-2">
+      <h1 className="heading-xl mb-2">היסטוריית מסלולים</h1>
+      <div className="grid-2col">
         {trips.map((trip) => (
-          <Card key={trip.id}>
-            <CardBody>
-              <Heading size="md">{trip.title || `מסלול #${trip.id}`}</Heading>
-              <Text mt={2}>{trip.description || "אין תיאור"}</Text>
+          <div key={trip.id} className="card">
+            <div className="card-body">
+              <h2 className="mb-1">{trip.title || `מסלול #${trip.id}`}</h2>
+              <p className="mb-1">{trip.description || "אין תיאור"}</p>
               <Button
-                mt={4}
-                size="sm"
+                variant="primary"
                 onClick={() => {
-                  /* בעתיד: ניווט לדף פרטי המסלול */
+                  // TODO: נווט לעמוד פרטי המסלול
                 }}
               >
                 פרטים
               </Button>
-            </CardBody>
-          </Card>
+            </div>
+          </div>
         ))}
-      </SimpleGrid>
-    </Box>
+      </div>
+    </div>
   );
 }

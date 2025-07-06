@@ -1,26 +1,21 @@
-// client/src/pages/Login.jsx
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Heading,
-  Input,
-  FormControl,
-  FormLabel,
-  Button,
-  VStack,
-  useToast,
-} from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import useApi from "../hooks/useApi";
 import { useAuth } from "../contexts/AuthContext";
 
+import "../styles/layout.css";
+import "../styles/typography.css";
+import "../styles/utilities.css";
+import styles from "../styles/pages/login.module.css"; // CSS Module
+
+import LoginForm from "../components/ui/LoginForm";
+
 export default function Login() {
   const { token, login } = useAuth();
   const nav = useNavigate();
-  const toast = useToast();
   const api = useApi();
 
-  // אם כבר מחובר, נזרוק מיד ל-Dashboard
+  // אם כבר מחובר, מפנים אוטומטית לדאשבורד
   useEffect(() => {
     if (token) {
       nav("/dashboard", { replace: true });
@@ -34,47 +29,28 @@ export default function Login() {
     e.preventDefault();
     try {
       const { data } = await api.post("/auth/login", { email, password });
-      // שומרים ב-context + localStorage
       login(data.token, data.user);
-      // מפנים לדאשבורד
       nav("/dashboard");
     } catch (err) {
-      toast({
-        status: "error",
-        description: err.response?.data?.message || "שגיאת התחברות",
-        isClosable: true,
-      });
+      window.alert(err.response?.data?.message || "שגיאת התחברות");
     }
   };
 
   return (
-    <Box maxW="md" mx="auto" mt={16} p={8} borderWidth="1px" borderRadius="lg">
-      <Heading mb={6} textAlign="center">
-        התחברות
-      </Heading>
-      <form onSubmit={handleSubmit}>
-        <VStack spacing={4}>
-          <FormControl isRequired>
-            <FormLabel>אימייל</FormLabel>
-            <Input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </FormControl>
-          <FormControl isRequired>
-            <FormLabel>סיסמה</FormLabel>
-            <Input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </FormControl>
-          <Button colorScheme="teal" type="submit" w="full">
-            התחבר
-          </Button>
-        </VStack>
-      </form>
-    </Box>
+    <div className={styles.loginPage}>
+      {/* כותרת קטנה יותר עם מרווח למעלה */}
+      <h1 className={styles.heading}>התחברות</h1>
+
+      {/* עוטף את הטופס כדי לדחוף אותו למטה */}
+      <div className={styles.formWrapper}>
+        <LoginForm
+          email={email}
+          onEmailChange={setEmail}
+          password={password}
+          onPasswordChange={setPassword}
+          onSubmit={handleSubmit}
+        />
+      </div>
+    </div>
   );
 }

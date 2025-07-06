@@ -25,7 +25,7 @@ const options = {
       },
     ],
   },
-  apis: ["./routes/*.js"], // ישירות מתוך auth.js
+  apis: ["./routes/*.js"],
 };
 
 const specs = swaggerJsdoc(options);

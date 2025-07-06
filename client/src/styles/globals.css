@@ -1,0 +1,30 @@
+/* איפוס מרג'ין/פדינג ברירת מחדל */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* טיפוגרפיה בסיסית */
+html,
+body {
+  font-family: var(--font-base);
+  line-height: var(--line-height-base);
+  font-weight: var(--font-weight-base);
+  background-color: var(--clr-bg-dark);
+  color: var(--clr-text-dark);
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+/* קישורים */
+a {
+  font-weight: 500;
+  color: var(--clr-primary);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--clr-primary-hover);
+}
