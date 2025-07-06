@@ -1,18 +1,13 @@
-// client/src/pages/TripDetails.jsx
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import useApi from "../hooks/useApi";
 import { useAuth } from "../contexts/AuthContext";
+import useApi from "../hooks/useApi";
 
 import Map from "../components/ui/Map";
-import InputField from "../components/ui/InputField";
 import FormGroup from "../components/ui/FormGroup";
 import Button from "../components/ui/Button";
 
-import "../styles/layout.css";
-import "../styles/typography.css";
-import "../styles/utilities.css";
-import "../styles/components/card.css";
+import styles from "../styles/pages/tripDetails.module.css";
 
 export default function TripDetails() {
   const { state } = useLocation();
@@ -27,15 +22,13 @@ export default function TripDetails() {
 
   if (!trip) {
     return (
-      <div className="container text-center mt-2">
-        <p>No route to show.</p>
-        <Button
-          variant="primary"
-          onClick={() => nav("/dashboard")}
-          style={{ marginTop: "1rem" }}
-        >
-          Back to Home Page
-        </Button>
+      <div className={styles.page}>
+        <div className={styles.container}>
+          <p className={styles.text}>No route to show.</p>
+          <div className={styles.buttonsWrapper}>
+            <Button variant="primary" onClick={() => nav("/dashboard")}>Back to Home</Button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -47,17 +40,19 @@ export default function TripDetails() {
       window.alert("The trip was saved successfully!");
       nav("/trips");
     } catch {
-      window.alert("An error accured, the trip wasn't saved.");
+      window.alert("An error occurred; the trip wasn't saved.");
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <div className="container mt-2" style={{ maxWidth: "800px" }}>
-      {/* 1. כתיבת כותרת */}
-      <div className="card mb-2">
-        <div className="card-body">
+    <div className={styles.page}>
+      <div className={styles.container}>
+        <h1 className={styles.heading}>Trip Details</h1>
+
+        {/* Trip Name */}
+        <div className={styles.card}>
           <FormGroup label="Trip Name" required>
             <input
               type="text"
@@ -68,11 +63,9 @@ export default function TripDetails() {
             />
           </FormGroup>
         </div>
-      </div>
 
-      {/* 2. תיאור קצר */}
-      <div className="card mb-2">
-        <div className="card-body">
+        {/* Description */}
+        <div className={styles.card}>
           <FormGroup label="Description" required>
             <textarea
               value={description}
@@ -83,103 +76,68 @@ export default function TripDetails() {
             />
           </FormGroup>
         </div>
-      </div>
 
-      {/* 3. סוג המסלול */}
-      <p className="mb-2">
-        <strong>Type:</strong> {trip.type}
-      </p>
+        {/* Info Card */}
+        <div className={styles.card}>
+          <p className={styles.text}><strong>Type:</strong> {trip.type}</p>
+          <p className={styles.text}><strong>Starting Point:</strong> {trip.startingPoint}</p>
+          <p className={styles.text}><strong>Ending Point:</strong> {trip.endingPoint}</p>
+          <p className={styles.text}><strong>Total Length:</strong> {trip.totalLengthKm} km</p>
+        </div>
 
-      {/* 4. מפה */}
-      <div className="card mb-2">
-        <div className="card-body" style={{ padding: 0 }}>
+        {/* Map */}
+        <div className={styles.card}>
           <Map points={trip.route} />
         </div>
-      </div>
 
-      {/* 5. נקודת מוצא וסיום */}
-      <div className="card mb-2">
-        <div className="card-body">
-          <p>
-            <strong>Starting Point:</strong> {trip.startingPoint}
-          </p>
-          <p>
-            <strong>Ending Point:</strong> {trip.endingPoint}
-          </p>
-        </div>
-      </div>
-
-      {/* 6. אורך כולל */}
-      <p className="mb-2">
-        <strong>Total Length:</strong> {trip.totalLengthKm} km
-      </p>
-
-      {/* 7. פירוט יומי */}
-      {trip.days.map((d) => (
-        <div key={d.day} className="card mb-2">
-          <div className="card-body">
-            <h2 className="heading-md mb-1">Day {d.day}</h2>
-            <p>Length: {d.lengthKm} km</p>
-            <p>Starting Poind: {d.startingPoint}</p>
-            <p>Ending Point: {d.endingPoint}</p>
-            <p className="mt-1">Description: {d.description}</p>
+        {/* Daily Breakdown */}
+        <div className={styles.card}>
+          <h2 className={styles.sectionTitle}>Daily Breakdown</h2>
+          <div className={styles.daysList}>
+            {trip.days.map((d) => (
+              <div key={d.day} className={styles.dayItem}>
+                <h3 className={styles.dayTitle}>Day {d.day}</h3>
+                <p className={styles.text}>Length: {d.lengthKm} km</p>
+                <p className={styles.text}>Start: {d.startingPoint}</p>
+                <p className={styles.text}>End: {d.endingPoint}</p>
+                <p className={styles.text}>{d.description}</p>
+              </div>
+            ))}
           </div>
         </div>
-      ))}
 
-      {/* 8. מזג אוויר */}
-      <div className="card mb-2">
-        <div className="card-body">
-          <h2 className="heading-md mb-1">Weather</h2>
-
+        {/* Weather */}
+        <div className={styles.card}>
+          <h2 className={styles.sectionTitle}>Weather (Next 3 Days)</h2>
           {trip.weather?.forecast?.length ? (
             trip.weather.forecast.map((f) => (
-              <div key={f.dayOffset} className="mb-1">
-                <p>
-                  Day {f.dayOffset}: {f.condition}
-                </p>
-                <p>
-                  Tempreture: {f.minTempC}°–{f.maxTempC}°
-                </p>
+              <div key={f.dayOffset} className={styles.weatherDay}>
+                <p className={styles.text}><strong>Day {f.dayOffset}:</strong> {f.condition}</p>
+                <p className={styles.text}><strong>Temp:</strong> {f.minTempC}°–{f.maxTempC}°</p>
               </div>
             ))
           ) : (
-            <p>Not available yet</p>
+            <p className={styles.text}>Not available yet</p>
           )}
         </div>
-      </div>
 
-      {/* 9. תמונה */}
-      {trip.imageUrl && (
-        <div className="card mb-2 text-center">
-          <div className="card-body">
-            <img
-              src={trip.imageUrl}
-              alt="Trip Picture"
-              style={{ maxHeight: "300px", width: "auto" }}
-            />
+        {/* Image */}
+        {trip.imageUrl && (
+          <div className={styles.card + ' ' + styles.imageWrapper}>
+            <img src={trip.imageUrl} alt="Trip" className={styles.image} />
           </div>
-        </div>
-      )}
+        )}
 
-      {/* כפתורי שמירה וחזרה */}
-      {token && (
-        <Button
-          variant="primary"
-          onClick={handleSave}
-          disabled={saving}
-          style={{ width: "100%", marginBottom: "1rem" }}
-        >
-          {saving ? "Saving..." : "Save Trip"}
-        </Button>
-      )}
-      <Button
-        variant="secondary"
-        onClick={() => nav("/dashboard")}
-        style={{ width: "100%" }}
-      >
-        Back To Home Page
-      </Button>
+        {/* Actions */}
+        <div className={styles.buttonsWrapper}>
+          {token && (
+            <Button variant="primary" onClick={handleSave} disabled={saving}>
+              {saving ? "Saving..." : "Save Trip"}
+            </Button>
+          )}
+          <Button variant="secondary" onClick={() => nav("/dashboard")}>Back to Home</Button>
+        </div>
+      </div>
     </div>
   );
 }

@@ -2,10 +2,8 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
-import "../styles/layout.css";
-import "../styles/typography.css";
-import "../styles/utilities.css";
 import styles from "../styles/pages/landing.module.css";
+import "../styles/utilities.css";
 
 import Button from "../components/ui/Button";
 
@@ -20,32 +18,26 @@ export default function Landing() {
   }, [token, nav]);
 
   return (
-    <div className={styles.landingPage}>
-      {/* כותרת באמצע אופקית, מתחת ל־Navbar */}
-      <div className={styles.headingWrapper}>
-        <h1 className="heading-xl">Trip Planner</h1>
-      </div>
-
-      {/* כפתורים מתחת לכותרת */}
-      <div className={styles.buttonsWrapper}>
+    <div className={styles.hero}>
+      <div className={styles.overlay} />
+      <header className={styles.header}>
+        <h1 className={styles.title}>Trip Planner</h1>
+        <p className={styles.subtitle}>
+          Craft your perfect adventure in seconds
+        </p>
+      </header>
+      <div className={styles.ctaGroup}>
         <Button
           variant="primary"
           onClick={() => nav("/login")}
-          style={{ maxWidth: "300px", width: "100%" }}
+          className={styles.ctaButton}
         >
           Log In
         </Button>
-
         <Button
-          variant="primary"
+          variant="secondary"
           onClick={() => nav("/register")}
-          style={{
-            maxWidth: "300px",
-            width: "100%",
-            background: "transparent",
-            color: "var(--clr-primary)",
-            border: "1px solid var(--clr-primary)",
-          }}
+          className={styles.ctaButton}
         >
           Register
         </Button>

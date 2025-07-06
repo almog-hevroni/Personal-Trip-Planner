@@ -1,0 +1,49 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem 1rem;
+  background: linear-gradient(to right, #e0eafc, #cfdef3);  
+  min-height: 100vh;
+}
+
+.heading {
+  font-size: 3rem;
+  color: #5c6ac4;             /* primary purple */
+  margin-bottom: 2.5rem;
+  text-align: center;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.card {
+  background: #fafafa;
+  border: 1px solid #e2e2e2;
+  border-radius: 1rem;        /* rounded corners */
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.card h2 {
+  font-size: 1.25rem;         /* medium heading size */
+  margin-bottom: 0.75rem;
+  color: #333333;             /* dark text */
+}
+
+.card p {
+  flex-grow: 1;
+  color: #555555;             /* regular text */
+  margin-bottom: 1.25rem;
+}
+
+.buttonsWrapper {
+  margin-top: auto;
+}

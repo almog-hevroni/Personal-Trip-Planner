@@ -1,10 +1,8 @@
-// client/src/pages/Register.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useApi from "../hooks/useApi";
 
-import "../styles/layout.css";
-import "../styles/typography.css";
+import styles from "../styles/pages/register.module.css";
 import "../styles/utilities.css";
 
 import InputField from "../components/ui/InputField";
@@ -21,40 +19,47 @@ export default function Register() {
     e.preventDefault();
     try {
       await api.post("/auth/register", { name, email, password });
-      window.alert("Registered Successfully!");
+      window.alert("Registered successfully!");
       nav("/login");
     } catch (err) {
-      window.alert(err.response?.data?.message || "Error Regitering");
+      window.alert(err.response?.data?.message || "Error registering");
     }
   };
 
   return (
-    <div className="container mt-2" style={{ maxWidth: "400px" }}>
-      <h1 className="heading-xl text-center mb-2">Register</h1>
-      <form onSubmit={handleSubmit}>
-        <InputField label="Full Name" value={name} onChange={setName} required />
-        <InputField
-          label="Email"
-          type="email"
-          value={email}
-          onChange={setEmail}
-          required
-        />
-        <InputField
-          label="Password"
-          type="password"
-          value={password}
-          onChange={setPassword}
-          required
-        />
-        <Button
-          type="submit"
-          variant="primary"
-          style={{ width: "100%", marginTop: "1rem" }}
-        >
-          Register
-        </Button>
-      </form>
+    <div className={styles.hero}>
+      <div className={styles.overlay} />
+      <div className={styles.card}>
+        <h1 className={styles.title}>Create Account</h1>
+        <p className={styles.subtitle}>
+          Join us and start planning your next adventure
+        </p>
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <InputField
+            label="Full Name"
+            value={name}
+            onChange={setName}
+            required
+          />
+          <InputField
+            label="Email"
+            type="email"
+            value={email}
+            onChange={setEmail}
+            required
+          />
+          <InputField
+            label="Password"
+            type="password"
+            value={password}
+            onChange={setPassword}
+            required
+          />
+          <Button type="submit" variant="primary" className={styles.submit}>
+            Register
+          </Button>
+        </form>
+      </div>
     </div>
   );
 }

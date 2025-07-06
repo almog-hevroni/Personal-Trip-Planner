@@ -3,10 +3,8 @@ import { useNavigate } from "react-router-dom";
 import useApi from "../hooks/useApi";
 import { useAuth } from "../contexts/AuthContext";
 
-import "../styles/layout.css";
-import "../styles/typography.css";
+import styles from "../styles/pages/login.module.css";
 import "../styles/utilities.css";
-import styles from "../styles/pages/login.module.css"; // CSS Module
 
 import LoginForm from "../components/ui/LoginForm";
 
@@ -15,11 +13,9 @@ export default function Login() {
   const nav = useNavigate();
   const api = useApi();
 
-  // אם כבר מחובר, מפנים אוטומטית לדאשבורד
+  // Redirect if already logged in
   useEffect(() => {
-    if (token) {
-      nav("/dashboard", { replace: true });
-    }
+    if (token) nav("/dashboard", { replace: true });
   }, [token, nav]);
 
   const [email, setEmail] = useState("");
@@ -32,17 +28,16 @@ export default function Login() {
       login(data.token, data.user);
       nav("/dashboard");
     } catch (err) {
-      window.alert(err.response?.data?.message || "Error Loging In");
+      window.alert(err.response?.data?.message || "Error logging in");
     }
   };
 
   return (
-    <div className={styles.loginPage}>
-      {/* כותרת קטנה יותר עם מרווח למעלה */}
-      <h1 className={styles.heading}>Log In</h1>
-
-      {/* עוטף את הטופס כדי לדחוף אותו למטה */}
-      <div className={styles.formWrapper}>
+    <div className={styles.hero}>
+      <div className={styles.overlay} />
+      <div className={styles.card}>
+        <h1 className={styles.title}>Welcome Back</h1>
+        <p className={styles.subtitle}>Please log in to continue</p>
         <LoginForm
           email={email}
           onEmailChange={setEmail}

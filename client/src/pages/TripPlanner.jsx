@@ -8,9 +8,7 @@ import InputField from "../components/ui/InputField";
 import FormGroup from "../components/ui/FormGroup";
 import Button from "../components/ui/Button";
 
-import "../styles/layout.css";
-import "../styles/typography.css";
-import "../styles/utilities.css";
+import styles from "../styles/pages/tripPlanner.module.css";
 
 export default function TripPlanner() {
   const [location, setLocation] = useState("");
@@ -35,36 +33,43 @@ export default function TripPlanner() {
   };
 
   return (
-    <div className="container mt-2" style={{ maxWidth: "400px" }}>
-      <h1 className="heading-xl text-center mb-2">
-        {token ? "Create new trip" : "Trip Planner"}
-      </h1>
-      <form onSubmit={handleGenerate}>
-        <InputField
-          label="Location(Country/City)"
-          value={location}
-          onChange={setLocation}
-          required
-        />
-        <FormGroup label="Trip type" required>
-          <select
-            value={type}
-            onChange={(e) => setType(e.target.value)}
-            className="form-group-select"
-          >
-            <option value="bike">Bicycle</option>
-            <option value="track">Track</option>
-          </select>
-        </FormGroup>
-        <Button
-          type="submit"
-          variant="primary"
-          disabled={loading || !location}
-          style={{ width: "100%", marginTop: "1rem" }}
-        >
-          {loading ? "Loading..." : "Create Trip Plan"}
-        </Button>
-      </form>
+    <div className={styles.page}>
+      <div className={styles.card}>
+        <h1 className={styles.heading}>
+          {token ? "Create New Trip" : "Trip Planner"}
+        </h1>
+        <form className={styles.form} onSubmit={handleGenerate}>
+          <div className={styles.formGroup}>
+            <InputField
+              label="Location (Country/City)"
+              value={location}
+              onChange={setLocation}
+              required
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <FormGroup label="Trip Type" required>
+              <select
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+              >
+                <option value="bike">Bicycle</option>
+                <option value="track">Track</option>
+              </select>
+            </FormGroup>
+          </div>
+          <div className={styles.buttonWrapper}>
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={loading || !location}
+              style={{ width: "100%" }}
+            >
+              {loading ? "Loading…" : "Create Trip Plan"}
+            </Button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

@@ -2,15 +2,8 @@
 import React, { useEffect, useState } from "react";
 import useApi from "../hooks/useApi";
 import { useNavigate } from "react-router-dom";
-
-import "../styles/layout.css";
-import "../styles/typography.css";
-import "../styles/utilities.css";
-import "../styles/components/card.css";
-import "../styles/components/button.css";
-
-
 import Button from "../components/ui/Button";
+import styles from "../styles/pages/myTrips.module.css";
 
 export default function MyTrips() {
   const [trips, setTrips] = useState([]);
@@ -27,20 +20,21 @@ export default function MyTrips() {
       }
     }
     fetchTrips();
-  }, []);
+  }, [api]);
 
   return (
-    <div className="container mt-2">
-      <h1 className="heading-xl mb-2">Trips History</h1>
-      <div className="grid-2col">
+    <div className={styles.page}>
+      <h1 className={styles.heading}>Trip History</h1>
+      <div className={styles.cardGrid}>
         {trips.map((trip) => (
-          <div key={trip._id} className="card">
-            <div className="card-body">
-              <h2 className="mb-1">{trip.title || `Trip #${trip._id}`}</h2>
-              <p className="mb-1">{trip.description || "No Description"}</p>
+          <div key={trip._id} className={styles.card}>
+            <h2>{trip.title || `Trip #${trip._id}`}</h2>
+            <p>{trip.description || "No Description"}</p>
+            <div className={styles.buttonsWrapper}>
               <Button
                 variant="primary"
                 onClick={() => nav(`/trips/${trip._id}`)}
+                style={{ width: "100%" }}
               >
                 Show Details
               </Button>

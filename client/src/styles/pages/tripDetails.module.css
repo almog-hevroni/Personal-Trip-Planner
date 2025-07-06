@@ -1,0 +1,80 @@
+.page {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  background: #f0f2f5;
+  min-height: 100vh;
+}
+
+.container {
+  width: 100%;
+  max-width: 800px;
+}
+
+.heading {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #5850EC;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: #333;
+}
+
+.text {
+  font-size: 1rem;
+  color: #555;
+  margin: 0.25rem 0;
+}
+
+.daysList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.dayItem {
+  padding: 0.75rem;
+  border: 1px solid #e2e2e2;
+  border-radius: 0.75rem;
+  background: #fafafa;
+}
+
+.dayTitle {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.weatherDay {
+  margin-bottom: 1rem;
+}
+
+.imageWrapper {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.image {
+  max-width: 100%;
+  border-radius: 0.75rem;
+}
+
+.buttonsWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}

@@ -1,5 +1,5 @@
-// client/src/pages/TripDetails.jsx
-import React, { useState, useEffect } from "react";
+// client/src/pages/HistoryTripDetails.jsx
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import useApi from "../hooks/useApi";
 import Button from "../components/ui/Button";
@@ -9,133 +9,117 @@ import "../styles/layout.css";
 import "../styles/typography.css";
 import "../styles/utilities.css";
 import "../styles/components/card.css";
-
+import styles from "../styles/pages/tripDetails.module.css"; // reuse the same styling
 
 export default function HistoryTripDetails() {
-    const api = useApi();
-    const [trip, setTrip] = useState({});
-    const { tripId } = useParams();
-    const nav = useNavigate();
+  const api = useApi();
+  const [trip, setTrip] = useState({});
+  const { tripId } = useParams();
+  const nav = useNavigate();
 
+  useEffect(() => {
+    async function fetchTrip() {
+      try {
+        const { data } = await api.get(`/trips/${tripId}`);
+        setTrip(data);
+      } catch {
+        window.alert("Error fetching trips.");
+      }
+    }
+    fetchTrip();
+  }, [api, tripId]);
 
+  return (
+    <div className={styles.page}>
+      <div className={styles.container}>
+        {/* TITLE */}
+        <div className={styles.card}>
+          <h1 className={styles.heading}>{trip.title}</h1>
+        </div>
 
-    useEffect(() => {
-        async function fetchTrip() {
-          try {
-            const { data } = await api.get(`/trips/${tripId}`);
-            setTrip(data);
-            console.log(data);
-
-          } catch {
-            window.alert("Error fetching trips.");
+        {/* DESCRIPTION */}
+        <div className={styles.card}>
+          <h2 className={styles.sectionTitle}>Description</h2>
+          {trip.description
+            ? <p className={styles.text}>{trip.description}</p>
+            : <p className={styles.text}><em>No description available.</em></p>
           }
-        }
-        fetchTrip();
-      }, []);
-    
-      return (
-        <div className="container mt-2" style={{ maxWidth: "800px" }}>
-              {/* 1. כתיבת כותרת */}
-              <div className="card mb-2">
-                <div className="card-body">
-                  <h2>
-                    {trip.title}
-                  </h2>
-                </div>
+        </div>
+
+        {/* INFO (type + total length) */}
+        <div className={styles.card}>
+          <p className={styles.text}>
+            <strong>Type:</strong> {trip.type}
+          </p>
+          <p className={styles.text}>
+            <strong>Total Length:</strong> {trip.totalLengthKm} km
+          </p>
+        </div>
+
+        {/* MAP */}
+        <div className={styles.card}>
+          <Map points={trip.route} />
+        </div>
+
+        {/* START & END */}
+        <div className={styles.card}>
+          <p className={styles.text}>
+            <strong>Starting Point:</strong> {trip.startingPoint}
+          </p>
+          <p className={styles.text}>
+            <strong>Ending Point:</strong> {trip.endingPoint}
+          </p>
+        </div>
+
+        {/* ITINERARY */}
+        <div className={styles.card}>
+          <h2 className={styles.sectionTitle}>Itinerary</h2>
+          <div className={styles.daysList}>
+            {trip.days?.map((d) => (
+              <div key={d.day} className={styles.dayItem}>
+                <h3 className={styles.dayTitle}>Day {d.day}</h3>
+                <p className={styles.text}>Length: {d.lengthKm} km</p>
+                <p className={styles.text}>Start: {d.startingPoint}</p>
+                <p className={styles.text}>End: {d.endingPoint}</p>
+                <p className={styles.text}>{d.description}</p>
               </div>
-        
-              {/* 2. תיאור קצר */}
-              <div className="card mb-2">
-                <div className="card-body">
-                  <p label="Description" required>
-                    {trip.description}
-                  </p>
-                </div>
+            ))}
+          </div>
+        </div>
+
+        {/* WEATHER */}
+        <div className={styles.card}>
+          <h2 className={styles.sectionTitle}>Weather</h2>
+          {trip.weather?.forecast?.length ? (
+            trip.weather.forecast.map((f) => (
+              <div key={f.dayOffset} className={styles.weatherDay}>
+                <p className={styles.text}>
+                  <strong>Day {f.dayOffset}:</strong> {f.condition}
+                </p>
+                <p className={styles.text}>
+                  <strong>Temp:</strong> {f.minTempC}°–{f.maxTempC}°
+                </p>
               </div>
-        
-              {/* 3. סוג המסלול */}
-              <p className="mb-2">
-                <strong>Type:</strong> {trip.type}
-              </p>
-        
-              {/* 4. מפה */}
-              <div className="card mb-2">
-                <div className="card-body" style={{ padding: 0 }}>
-                  <Map points={trip.route} />
-                </div>
-              </div>
-        
-              {/* 5. נקודת מוצא וסיום */}
-              <div className="card mb-2">
-                <div className="card-body">
-                  <p>
-                    <strong>Starting Point:</strong> {trip.startingPoint}
-                  </p>
-                  <p>
-                    <strong>Ending Point:</strong> {trip.endingPoint}
-                  </p>
-                </div>
-              </div>
-        
-              {/* 6. אורך כולל */}
-              <p className="mb-2">
-                <strong>Total Length:</strong> {trip.totalLengthKm} km
-              </p>
-        
-              {/* 7. פירוט יומי */}
-              {trip?.days?.map((d) => (
-                <div key={d.day} className="card mb-2">
-                  <div className="card-body">
-                    <h2 className="heading-md mb-1">Day {d.day}</h2>
-                    <p>Length: {d.lengthKm} km</p>
-                    <p>Starting Poind: {d.startingPoint}</p>
-                    <p>Ending Point: {d.endingPoint}</p>
-                    <p className="mt-1">Description: {d.description}</p>
-                  </div>
-                </div>
-              ))}
-        
-              {/* 8. מזג אוויר */}
-              <div className="card mb-2">
-                <div className="card-body">
-                  <h2 className="heading-md mb-1">Weather</h2>
-        
-                  {trip.weather?.forecast?.length ? (
-                    trip.weather.forecast.map((f) => (
-                      <div key={f.dayOffset} className="mb-1">
-                        <p>
-                          Day {f.dayOffset}: {f.condition}
-                        </p>
-                        <p>
-                          Tempreture: {f.minTempC}°–{f.maxTempC}°
-                        </p>
-                      </div>
-                    ))
-                  ) : (
-                    <p>Not available yet</p>
-                  )}
-                </div>
-              </div>
-        
-              {/* 9. תמונה */}
-              {trip.imageUrl && (
-                <div className="card mb-2 text-center">
-                  <div className="card-body">
-                    <img
-                      src={trip.imageUrl}
-                      alt="Trip Picture"
-                      style={{ maxHeight: "300px", width: "auto" }}
-                    />
-                  </div>
-                </div>
-              )}
-              <Button
-                variant="secondary"
-                onClick={() => nav("/dashboard")}
-                style={{ width: "100%" }}
-              >
-                Back To Home Page
-              </Button>
-            </div>
-          );
+            ))
+          ) : (
+            <p className={styles.text}>Not available yet</p>
+          )}
+        </div>
+
+        {/* IMAGE */}
+        {trip.imageUrl && (
+          <div className={`${styles.card} ${styles.imageWrapper}`}>
+            <img src={trip.imageUrl} alt="Trip" className={styles.image} />
+          </div>
+        )}
+
+        {/* BACK BUTTON */}
+        <div className={styles.buttonsWrapper}>
+          <Button variant="secondary" onClick={() => nav("/dashboard")}>
+            Back To Home Page
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
 }

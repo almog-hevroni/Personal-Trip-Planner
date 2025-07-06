@@ -1,24 +1,60 @@
-/* src/styles/pages/landing.module.css */
-
-.landingPage {
-  width: 100%;
+.hero {
+  position: relative;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  padding-top: 4rem; /* ריווח מתחת ל-Navbar */
-}
-
-.headingWrapper {
-  width: 100%;
   text-align: center;
-  margin: 0 0 1rem; /* אין מרווח מעל, 1rem מתחת */
 }
 
-.buttonsWrapper {
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    rgba(0, 0, 0, 0.5),
+    rgba(0, 0, 0, 0.2)
+  );
+  z-index: 1;
+}
+
+.header {
+  position: relative;
+  z-index: 2;
+  max-width: 600px;
+  padding: 0 1rem;
+}
+
+.title {
+  font-size: 3rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: #f0f0f0;
+  margin-bottom: 2rem;
+}
+
+.ctaGroup {
+  position: relative;
+  z-index: 2;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   gap: 1rem;
-  margin-top: 3rem; /* דוחף את הכפתורים עוד קצת למטה */
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.ctaButton {
+  min-width: 180px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 2rem;
+  font-size: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.ctaButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
