@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -6,13 +6,20 @@ import styles from "../styles/pages/landing.module.css";
 import "../styles/utilities.css";
 
 import Button from "../components/ui/Button";
+import Modal from "../components/ui/Modal";
+import Login from "./Login";
+import Register from "./Register";
 
 export default function Landing() {
   const { token } = useAuth();
   const nav = useNavigate();
 
+  const [showLogin, setShowLogin] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
+
+  // ✅ רק אם יש token ואנחנו בדף הנחיתה – נשלח לדשבורד
   useEffect(() => {
-    if (token) {
+    if (token && window.location.pathname === "/") {
       nav("/dashboard", { replace: true });
     }
   }, [token, nav]);
@@ -29,19 +36,39 @@ export default function Landing() {
       <div className={styles.ctaGroup}>
         <Button
           variant="primary"
-          onClick={() => nav("/login")}
+          onClick={() => setShowLogin(true)}
           className={styles.ctaButton}
         >
           Log In
         </Button>
         <Button
           variant="secondary"
-          onClick={() => nav("/register")}
+          onClick={() => setShowRegister(true)}
           className={styles.ctaButton}
         >
           Register
         </Button>
       </div>
+
+      {/* מודל התחברות */}
+      {showLogin && (
+        <Modal onClose={() => setShowLogin(false)}>
+          <Login embedded onSuccess={() => setShowLogin(false)} />
+        </Modal>
+      )}
+
+      {/* מודל הרשמה */}
+      {showRegister && (
+        <Modal onClose={() => setShowRegister(false)}>
+          <Register
+            embedded
+            onSuccess={() => {
+              setShowRegister(false);
+              setShowLogin(true); // אוטומטית פותח התחברות אחרי הרשמה
+            }}
+          />
+        </Modal>
+      )}
     </div>
   );
 }

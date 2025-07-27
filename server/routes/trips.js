@@ -24,7 +24,7 @@ const openai = new OpenAI({
  *           type: string
  *         type:
  *           type: string
- *           enum: [bike, track]
+ *           enum: [bike, trek]
  *         description:
  *           type: string
  *         startingPoint:
@@ -241,7 +241,7 @@ router.post("/", authenticateToken, async (req, res) => {
  *                 type: string
  *               type:
  *                 type: string
- *                 enum: [bike, track]
+ *                 enum: [bike, trek]
  *     responses:
  *       200:
  *         description: Generated trip object with detailed daily breakdown
@@ -263,7 +263,7 @@ Generate a ${type} trip for "${location}", broken down by day, with map-ready ge
 
 Rules:
 - If type is "bike": exactly 2 consecutive days; each day ≤ 60 km; total ≤ 120 km.
-- If type is "track": 3 or more days; each day 5–15 km; the trip must form a loop (startingPoint = endingPoint).
+- If type is "trek": 3 or more days; each day 5–15 km; the trip must form a loop (startingPoint = endingPoint).
 
 Return exactly one JSON object (no markdown, no commentary):
 {

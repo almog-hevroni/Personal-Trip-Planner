@@ -1,4 +1,3 @@
-// client/src/pages/HistoryTripDetails.jsx
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import useApi from "../hooks/useApi";
@@ -9,11 +8,12 @@ import "../styles/layout.css";
 import "../styles/typography.css";
 import "../styles/utilities.css";
 import "../styles/components/card.css";
-import styles from "../styles/pages/tripDetails.module.css"; // reuse the same styling
+import styles from "../styles/pages/tripDetails.module.css";
 
 export default function HistoryTripDetails() {
   const api = useApi();
   const [trip, setTrip] = useState({});
+  const [activeDay, setActiveDay] = useState(null); // ← הוספה
   const { tripId } = useParams();
   const nav = useNavigate();
 
@@ -22,31 +22,53 @@ export default function HistoryTripDetails() {
       try {
         const { data } = await api.get(`/trips/${tripId}`);
         setTrip(data);
+        // מגדירים כברירת מחדל את היום הראשון
+        if (data.days && data.days.length > 0) {
+          setActiveDay(data.days[0].day);
+        }
       } catch {
-        window.alert("Error fetching trips.");
+        window.alert("Error fetching trip.");
       }
     }
     fetchTrip();
   }, [api, tripId]);
 
+  const scrollToDay = (day) => {
+    const el = document.getElementById(`day-${day}`);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      setActiveDay(day);
+    }
+  };
+
   return (
     <div className={styles.page}>
-      <div className={styles.container}>
-        {/* TITLE */}
-        <div className={styles.card}>
-          <h1 className={styles.heading}>{trip.title}</h1>
+      {/* Hero עם תמונה ושם הטיול */}
+      {trip.imageUrl && (
+        <div className={styles.hero}>
+          <img
+            src={trip.imageUrl}
+            alt={trip.title}
+            className={styles.heroImage}
+          />
+          <h1 className={styles.heroTitle}>{trip.title}</h1>
         </div>
+      )}
 
-        {/* DESCRIPTION */}
+      <div className={styles.container}>
+        {/* תיאור */}
         <div className={styles.card}>
           <h2 className={styles.sectionTitle}>Description</h2>
-          {trip.description
-            ? <p className={styles.text}>{trip.description}</p>
-            : <p className={styles.text}><em>No description available.</em></p>
-          }
+          {trip.description ? (
+            <p className={styles.text}>{trip.description}</p>
+          ) : (
+            <p className={styles.text}>
+              <em>No description available.</em>
+            </p>
+          )}
         </div>
 
-        {/* INFO (type + total length) */}
+        {/* סוג ואורך כולל */}
         <div className={styles.card}>
           <p className={styles.text}>
             <strong>Type:</strong> {trip.type}
@@ -56,12 +78,12 @@ export default function HistoryTripDetails() {
           </p>
         </div>
 
-        {/* MAP */}
+        {/* מפה */}
         <div className={styles.card}>
-          <Map points={trip.route} />
+          <Map points={trip.route || []} type={trip.type} />
         </div>
 
-        {/* START & END */}
+        {/* נקודת מוצא וסיום */}
         <div className={styles.card}>
           <p className={styles.text}>
             <strong>Starting Point:</strong> {trip.startingPoint}
@@ -71,12 +93,31 @@ export default function HistoryTripDetails() {
           </p>
         </div>
 
-        {/* ITINERARY */}
+        {/* תוכנית יומית */}
         <div className={styles.card}>
           <h2 className={styles.sectionTitle}>Itinerary</h2>
+
+          {/* רשימת ה־Tabs */}
+          <div className={styles.tabsContainer}>
+            {trip.days?.map((d) => (
+              <button
+                key={d.day}
+                className={
+                  activeDay === d.day
+                    ? `${styles.tabButton} ${styles.tabButtonActive}`
+                    : styles.tabButton
+                }
+                onClick={() => scrollToDay(d.day)}
+              >
+                Day {d.day}
+              </button>
+            ))}
+          </div>
+
+          {/* פירוט לכל יום */}
           <div className={styles.daysList}>
             {trip.days?.map((d) => (
-              <div key={d.day} className={styles.dayItem}>
+              <div id={`day-${d.day}`} key={d.day} className={styles.dayItem}>
                 <h3 className={styles.dayTitle}>Day {d.day}</h3>
                 <p className={styles.text}>Length: {d.lengthKm} km</p>
                 <p className={styles.text}>Start: {d.startingPoint}</p>
@@ -87,7 +128,7 @@ export default function HistoryTripDetails() {
           </div>
         </div>
 
-        {/* WEATHER */}
+        {/* מזג אוויר */}
         <div className={styles.card}>
           <h2 className={styles.sectionTitle}>Weather</h2>
           {trip.weather?.forecast?.length ? (
@@ -106,14 +147,7 @@ export default function HistoryTripDetails() {
           )}
         </div>
 
-        {/* IMAGE */}
-        {trip.imageUrl && (
-          <div className={`${styles.card} ${styles.imageWrapper}`}>
-            <img src={trip.imageUrl} alt="Trip" className={styles.image} />
-          </div>
-        )}
-
-        {/* BACK BUTTON */}
+        {/* כפתור חזרה */}
         <div className={styles.buttonsWrapper}>
           <Button variant="secondary" onClick={() => nav("/dashboard")}>
             Back To Home Page

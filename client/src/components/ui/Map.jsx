@@ -1,32 +1,90 @@
-import React, { useEffect } from "react";
-import { MapContainer, TileLayer, useMap } from "react-leaflet";
+import React, { useEffect, useState } from "react";
+import {
+  MapContainer,
+  TileLayer,
+  Polyline,
+  Marker,
+  Tooltip,
+  useMap,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import "leaflet-routing-machine";
-import L from "leaflet";
+import mapboxSdk from "@mapbox/mapbox-sdk/services/directions";
 
-// Component to render realistic routing on the map
-function RoutingMachine({ waypoints }) {
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
+const directionsClient = mapboxSdk({ accessToken: MAPBOX_TOKEN });
+
+function RoutingLine({ points }) {
   const map = useMap();
+  const [route, setRoute] = useState([]);
+
   useEffect(() => {
-    if (!map || !Array.isArray(waypoints) || waypoints.length < 2) return;
+    if (!map || points.length < 2) return;
 
-    const control = L.Routing.control({
-      waypoints: waypoints.map(({ lat, lng }) => L.latLng(lat, lng)),
-      lineOptions: { styles: [{ color: "#3B82F6", weight: 5 }] },
-      addWaypoints: false,
-      draggableWaypoints: false,
-      fitSelectedRoutes: true,
-      showAlternatives: false,
-    }).addTo(map);
+    console.log("Calculating route for points:", points);
 
-    return () => map.removeControl(control);
-  }, [map, waypoints]);
-  return null;
+    const osrmUrl = `https://router.project-osrm.org/route/v1/walking/${points
+      .map((p) => `${p.lng},${p.lat}`)
+      .join(";")}?overview=full&geometries=geojson`;
+
+    async function fetchRoute() {
+      console.log("Trying OSRM first...");
+      try {
+        const osrmRes = await fetch(osrmUrl);
+        const osrmData = await osrmRes.json();
+
+        if (osrmData.routes?.length) {
+          const coords = osrmData.routes[0].geometry.coordinates;
+          const latlngs = coords.map(([lng, lat]) => [lat, lng]);
+          setRoute(latlngs);
+          map.fitBounds(latlngs);
+          return;
+        } else {
+          throw new Error("OSRM returned no routes");
+        }
+      } catch (err) {
+        console.warn("OSRM failed, falling back to Mapbox", err);
+
+        directionsClient
+          .getDirections({
+            profile: "walking",
+            geometries: "geojson",
+            overview: "full",
+            waypoints: points.map((p) => ({
+              coordinates: [p.lng, p.lat],
+            })),
+          })
+          .send()
+          .then((res) => {
+            const coords = res.body.routes[0].geometry.coordinates;
+            const latlngs = coords.map(([lng, lat]) => [lat, lng]);
+            setRoute(latlngs);
+            map.fitBounds(latlngs);
+          })
+          .catch((err) => {
+            console.error("Mapbox route error:", err);
+          });
+      }
+    }
+
+    fetchRoute();
+  }, [map, JSON.stringify(points)]);
+
+  return route.length > 0 ? (
+    <Polyline positions={route} color="#3B82F6" weight={5} />
+  ) : null;
 }
 
-// Main Map component
-export default function Map({ points = [] }) {
+export default function Map({ points = [], type }) {
   const center = points[0] || { lat: 32.08, lng: 34.78 };
+
+  // טיפול במסלול מסוג "trek" – להסיר נקודת סיום כפולה
+  const displayPoints =
+    type === "trek" &&
+    points.length > 1 &&
+    points[0].lat === points[points.length - 1].lat &&
+    points[0].lng === points[points.length - 1].lng
+      ? points.slice(0, -1)
+      : points;
 
   return (
     <MapContainer
@@ -35,7 +93,16 @@ export default function Map({ points = [] }) {
       style={{ height: "400px", width: "100%" }}
     >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-      <RoutingMachine waypoints={points} />
+
+      {displayPoints.map((p, i) => (
+        <Marker key={i} position={[p.lat, p.lng]}>
+          <Tooltip permanent direction="center">
+            {i + 1}
+          </Tooltip>
+        </Marker>
+      ))}
+
+      <RoutingLine points={points} />
     </MapContainer>
   );
 }

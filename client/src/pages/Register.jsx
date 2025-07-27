@@ -8,7 +8,7 @@ import "../styles/utilities.css";
 import InputField from "../components/ui/InputField";
 import Button from "../components/ui/Button";
 
-export default function Register() {
+export default function Register({ embedded = false, onSuccess }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,16 +19,17 @@ export default function Register() {
     e.preventDefault();
     try {
       await api.post("/auth/register", { name, email, password });
-      window.alert("Registered successfully!");
-      nav("/login");
+      alert("Registered successfully!");
+      if (embedded && onSuccess) onSuccess();
+      else nav("/login");
     } catch (err) {
-      window.alert(err.response?.data?.message || "Error registering");
+      alert(err.response?.data?.message || "Error registering");
     }
   };
 
   return (
-    <div className={styles.hero}>
-      <div className={styles.overlay} />
+    <div className={embedded ? "" : styles.hero}>
+      {!embedded && <div className={styles.overlay} />}
       <div className={styles.card}>
         <h1 className={styles.title}>Create Account</h1>
         <p className={styles.subtitle}>

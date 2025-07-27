@@ -8,15 +8,16 @@ import "../styles/utilities.css";
 
 import LoginForm from "../components/ui/LoginForm";
 
-export default function Login() {
+export default function Login({ embedded = false, onSuccess }) {
   const { token, login } = useAuth();
   const nav = useNavigate();
   const api = useApi();
 
-  // Redirect if already logged in
   useEffect(() => {
-    if (token) nav("/dashboard", { replace: true });
-  }, [token, nav]);
+    if (!embedded && token) {
+      nav("/dashboard", { replace: true });
+    }
+  }, [token, nav, embedded]);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,15 +27,16 @@ export default function Login() {
     try {
       const { data } = await api.post("/auth/login", { email, password });
       login(data.token, data.user);
-      nav("/dashboard");
+      if (embedded && onSuccess) onSuccess();
+      else nav("/dashboard");
     } catch (err) {
-      window.alert(err.response?.data?.message || "Error logging in");
+      alert(err.response?.data?.message || "Error logging in");
     }
   };
 
   return (
-    <div className={styles.hero}>
-      <div className={styles.overlay} />
+    <div className={embedded ? "" : styles.hero}>
+      {!embedded && <div className={styles.overlay} />}
       <div className={styles.card}>
         <h1 className={styles.title}>Welcome Back</h1>
         <p className={styles.subtitle}>Please log in to continue</p>

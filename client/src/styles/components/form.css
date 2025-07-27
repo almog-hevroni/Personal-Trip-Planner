@@ -11,19 +11,19 @@
 }
 
 .form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
+  color: var(--clr-text-dark); /* יש לך אותו! */
 }
 
 /* שדות רגילים – מסגרת מלאה קבועה */
 .form-group input,
 .form-group textarea,
 .form-group select {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid var(--clr-border);
+  background: white; /* 🧠 חובה למודלים */
+  color: #111; /* 🧠 או var(--clr-text-dark-light) */
+  border: 1px solid #ccc;
   border-radius: 4px;
+  padding: 0.5rem;
+  width: 100%;
   font-size: 1rem;
   box-sizing: border-box;
 }

@@ -11,22 +11,24 @@ export default function Navbar() {
 
   const handleLogout = () => {
     logout();
-    nav("/", { replace: true });
+    nav("/", { replace: true }); // 👈 שולח לדף הנחיתה
   };
 
   return (
     <nav className="navbar">
-      {/* בצד שמאל */}
+      {/* צד שמאל – לוגו/כותרת */}
       <NavLink to="/" className="nav-link">
         Trip Planner
       </NavLink>
 
-      {/* בצד ימין */}
-      {token && (
-        <Button variant="secondary" onClick={handleLogout}>
-          Logout
-        </Button>
-      )}
+      {/* צד ימין – כפתורי auth */}
+      <div className="nav-actions">
+        {token ? (
+          <Button variant="secondary" onClick={handleLogout}>
+            Logout
+          </Button>
+        ) : null}
+      </div>
     </nav>
   );
 }

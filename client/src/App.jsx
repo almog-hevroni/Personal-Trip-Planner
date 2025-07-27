@@ -11,7 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import MyTrips from "./pages/MyTrips";
 import TripDetails from "./pages/TripDetails";
 import ProtectedRoute from "./components/guard/ProtectedRoute";
-import HistoryTripDetails from "./pages/HistoryTripDetails"
+import HistoryTripDetails from "./pages/HistoryTripDetails";
 
 export default function App() {
   const { pathname } = useLocation();
@@ -26,8 +26,6 @@ export default function App() {
         <Route path="/" element={<Landing />} />
 
         {/* Public pages */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
         <Route path="/planner" element={<TripPlanner />} />
 
         {/* Protected pages */}

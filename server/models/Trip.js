@@ -31,7 +31,7 @@ const tripSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     title: { type: String, trim: true, required: true },
-    type: { type: String, enum: ["bike", "track"], required: true },
+    type: { type: String, enum: ["bike", "trek"], required: true },
     description: { type: String, trim: true, default: "" }, // תיאור קצר למסלול
 
     // השדות החדשים:

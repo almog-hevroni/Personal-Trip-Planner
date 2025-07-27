@@ -26,7 +26,9 @@ export default function TripDetails() {
         <div className={styles.container}>
           <p className={styles.text}>No route to show.</p>
           <div className={styles.buttonsWrapper}>
-            <Button variant="primary" onClick={() => nav("/dashboard")}>Back to Home</Button>
+            <Button variant="primary" onClick={() => nav("/dashboard")}>
+              Back to Home
+            </Button>
           </div>
         </div>
       </div>
@@ -48,9 +50,15 @@ export default function TripDetails() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.container}>
-        <h1 className={styles.heading}>Trip Details</h1>
+      {/* Hero עם תמונה וכותרת מעליה */}
+      {trip.imageUrl && (
+        <div className={styles.hero}>
+          <img src={trip.imageUrl} alt="Trip" className={styles.heroImage} />
+          <h1 className={styles.heroTitle}>Trip Details</h1>
+        </div>
+      )}
 
+      <div className={styles.container}>
         {/* Trip Name */}
         <div className={styles.card}>
           <FormGroup label="Trip Name" required>
@@ -79,15 +87,23 @@ export default function TripDetails() {
 
         {/* Info Card */}
         <div className={styles.card}>
-          <p className={styles.text}><strong>Type:</strong> {trip.type}</p>
-          <p className={styles.text}><strong>Starting Point:</strong> {trip.startingPoint}</p>
-          <p className={styles.text}><strong>Ending Point:</strong> {trip.endingPoint}</p>
-          <p className={styles.text}><strong>Total Length:</strong> {trip.totalLengthKm} km</p>
+          <p className={styles.text}>
+            <strong>Type:</strong> {trip.type}
+          </p>
+          <p className={styles.text}>
+            <strong>Starting Point:</strong> {trip.startingPoint}
+          </p>
+          <p className={styles.text}>
+            <strong>Ending Point:</strong> {trip.endingPoint}
+          </p>
+          <p className={styles.text}>
+            <strong>Total Length:</strong> {trip.totalLengthKm} km
+          </p>
         </div>
 
         {/* Map */}
         <div className={styles.card}>
-          <Map points={trip.route} />
+          <Map points={trip.route} type={trip.type} />
         </div>
 
         {/* Daily Breakdown */}
@@ -112,21 +128,18 @@ export default function TripDetails() {
           {trip.weather?.forecast?.length ? (
             trip.weather.forecast.map((f) => (
               <div key={f.dayOffset} className={styles.weatherDay}>
-                <p className={styles.text}><strong>Day {f.dayOffset}:</strong> {f.condition}</p>
-                <p className={styles.text}><strong>Temp:</strong> {f.minTempC}°–{f.maxTempC}°</p>
+                <p className={styles.text}>
+                  <strong>Day {f.dayOffset}:</strong> {f.condition}
+                </p>
+                <p className={styles.text}>
+                  <strong>Temp:</strong> {f.minTempC}°–{f.maxTempC}°
+                </p>
               </div>
             ))
           ) : (
             <p className={styles.text}>Not available yet</p>
           )}
         </div>
-
-        {/* Image */}
-        {trip.imageUrl && (
-          <div className={styles.card + ' ' + styles.imageWrapper}>
-            <img src={trip.imageUrl} alt="Trip" className={styles.image} />
-          </div>
-        )}
 
         {/* Actions */}
         <div className={styles.buttonsWrapper}>
@@ -135,7 +148,9 @@ export default function TripDetails() {
               {saving ? "Saving..." : "Save Trip"}
             </Button>
           )}
-          <Button variant="secondary" onClick={() => nav("/dashboard")}>Back to Home</Button>
+          <Button variant="secondary" onClick={() => nav("/dashboard")}>
+            Back to Home
+          </Button>
         </div>
       </div>
     </div>
