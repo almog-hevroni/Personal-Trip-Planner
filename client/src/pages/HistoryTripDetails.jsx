@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import useApi from "../hooks/useApi";
 import Button from "../components/ui/Button";
 import Map from "../components/ui/Map";
+import ItineraryTabs from "../components/ui/ItineraryTabs";
 
 import "../styles/layout.css";
 import "../styles/typography.css";
@@ -13,33 +14,25 @@ import styles from "../styles/pages/tripDetails.module.css";
 export default function HistoryTripDetails() {
   const api = useApi();
   const [trip, setTrip] = useState({});
-  const [activeDay, setActiveDay] = useState(null); // ← הוספה
   const { tripId } = useParams();
   const nav = useNavigate();
 
   useEffect(() => {
+    let isMounted = true;
     async function fetchTrip() {
       try {
         const { data } = await api.get(`/trips/${tripId}`);
+        if (!isMounted) return;
         setTrip(data);
-        // מגדירים כברירת מחדל את היום הראשון
-        if (data.days && data.days.length > 0) {
-          setActiveDay(data.days[0].day);
-        }
       } catch {
         window.alert("Error fetching trip.");
       }
     }
     fetchTrip();
-  }, [api, tripId]);
-
-  const scrollToDay = (day) => {
-    const el = document.getElementById(`day-${day}`);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-      setActiveDay(day);
-    }
-  };
+    return () => {
+      isMounted = false;
+    };
+  }, [tripId, api]);
 
   return (
     <div className={styles.page}>
@@ -68,8 +61,11 @@ export default function HistoryTripDetails() {
           )}
         </div>
 
-        {/* סוג ואורך כולל */}
+        {/* מיקום, סוג ואורך כולל */}
         <div className={styles.card}>
+          <p className={styles.text}>
+            <strong>Location:</strong> {trip.location}
+          </p>
           <p className={styles.text}>
             <strong>Type:</strong> {trip.type}
           </p>
@@ -93,39 +89,9 @@ export default function HistoryTripDetails() {
           </p>
         </div>
 
-        {/* תוכנית יומית */}
+        {/* ItineraryTabs */}
         <div className={styles.card}>
-          <h2 className={styles.sectionTitle}>Itinerary</h2>
-
-          {/* רשימת ה־Tabs */}
-          <div className={styles.tabsContainer}>
-            {trip.days?.map((d) => (
-              <button
-                key={d.day}
-                className={
-                  activeDay === d.day
-                    ? `${styles.tabButton} ${styles.tabButtonActive}`
-                    : styles.tabButton
-                }
-                onClick={() => scrollToDay(d.day)}
-              >
-                Day {d.day}
-              </button>
-            ))}
-          </div>
-
-          {/* פירוט לכל יום */}
-          <div className={styles.daysList}>
-            {trip.days?.map((d) => (
-              <div id={`day-${d.day}`} key={d.day} className={styles.dayItem}>
-                <h3 className={styles.dayTitle}>Day {d.day}</h3>
-                <p className={styles.text}>Length: {d.lengthKm} km</p>
-                <p className={styles.text}>Start: {d.startingPoint}</p>
-                <p className={styles.text}>End: {d.endingPoint}</p>
-                <p className={styles.text}>{d.description}</p>
-              </div>
-            ))}
-          </div>
+          <ItineraryTabs days={trip.days || []} />
         </div>
 
         {/* מזג אוויר */}
@@ -149,8 +115,11 @@ export default function HistoryTripDetails() {
 
         {/* כפתור חזרה */}
         <div className={styles.buttonsWrapper}>
+          <Button variant="primary" onClick={() => nav("/trips")}>
+            Back to My Trips
+          </Button>
           <Button variant="secondary" onClick={() => nav("/dashboard")}>
-            Back To Home Page
+            Back to Home Page
           </Button>
         </div>
       </div>

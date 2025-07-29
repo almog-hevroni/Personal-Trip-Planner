@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import useApi from "../hooks/useApi";
@@ -6,6 +6,7 @@ import useApi from "../hooks/useApi";
 import Map from "../components/ui/Map";
 import FormGroup from "../components/ui/FormGroup";
 import Button from "../components/ui/Button";
+import ItineraryTabs from "../components/ui/ItineraryTabs"; // ← ייבוא הרכיב
 
 import styles from "../styles/pages/tripDetails.module.css";
 
@@ -19,6 +20,14 @@ export default function TripDetails() {
   const [title, setTitle] = useState(trip?.title || "");
   const [description, setDescription] = useState(trip?.description || "");
   const [saving, setSaving] = useState(false);
+
+  const [notification, setNotification] = useState("");
+
+  useEffect(() => {
+    if (!notification) return;
+    const timer = setTimeout(() => setNotification(""), 3000);
+    return () => clearTimeout(timer);
+  }, [notification]);
 
   if (!trip) {
     return (
@@ -39,10 +48,14 @@ export default function TripDetails() {
     setSaving(true);
     try {
       await api.post("/trips", { ...trip, title, description });
-      window.alert("The trip was saved successfully!");
-      nav("/trips");
+      // מראה Toast
+      setNotification("The trip was saved successfully!");
+      // ממתין 2 שניות לפני המעבר ל־MyTrips
+      setTimeout(() => {
+        nav("/trips");
+      }, 2000);
     } catch {
-      window.alert("An error occurred; the trip wasn't saved.");
+      setNotification("Oops! Could not save the trip.");
     } finally {
       setSaving(false);
     }
@@ -50,6 +63,10 @@ export default function TripDetails() {
 
   return (
     <div className={styles.page}>
+      {notification && (
+        <div className={styles.notification}>{notification}</div>
+      )}
+
       {/* Hero עם תמונה וכותרת מעליה */}
       {trip.imageUrl && (
         <div className={styles.hero}>
@@ -88,6 +105,9 @@ export default function TripDetails() {
         {/* Info Card */}
         <div className={styles.card}>
           <p className={styles.text}>
+            <p className={styles.text}>
+              <strong>Location:</strong> {trip.location}
+            </p>
             <strong>Type:</strong> {trip.type}
           </p>
           <p className={styles.text}>
@@ -107,19 +127,9 @@ export default function TripDetails() {
         </div>
 
         {/* Daily Breakdown */}
+        {/* Itinerary כטאבים */}
         <div className={styles.card}>
-          <h2 className={styles.sectionTitle}>Daily Breakdown</h2>
-          <div className={styles.daysList}>
-            {trip.days.map((d) => (
-              <div key={d.day} className={styles.dayItem}>
-                <h3 className={styles.dayTitle}>Day {d.day}</h3>
-                <p className={styles.text}>Length: {d.lengthKm} km</p>
-                <p className={styles.text}>Start: {d.startingPoint}</p>
-                <p className={styles.text}>End: {d.endingPoint}</p>
-                <p className={styles.text}>{d.description}</p>
-              </div>
-            ))}
-          </div>
+          <ItineraryTabs days={trip.days} />
         </div>
 
         {/* Weather */}

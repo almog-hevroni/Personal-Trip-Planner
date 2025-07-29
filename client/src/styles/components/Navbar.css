@@ -3,8 +3,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem 1.5rem;
-  background-color: #ffffff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  background-color: rgba(255, 255, 255, 0.652); /* שקיפות בינונית */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -13,12 +13,12 @@
 .navbar .nav-link {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #5850EC;
+  color: #363547;
   text-decoration: none;
 }
 
 .navbar .nav-link:hover {
-  color: #4538D8;
+  color: #363547;
 }
 
 .navbar button.btn {
@@ -27,11 +27,17 @@
 }
 
 .navbar button.btn-secondary {
-  border-color: #5850EC;
-  color: #ffffff;
+  border-color: rgba(88, 80, 236, 0.2);
+  color: #363547;
 }
 
 .navbar button.btn-secondary:hover {
   background-color: rgba(88, 80, 236, 0.2);
-  color: #4538D8;
+  color: rgba(88, 80, 236, 0.2);
+}
+
+.btn-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }

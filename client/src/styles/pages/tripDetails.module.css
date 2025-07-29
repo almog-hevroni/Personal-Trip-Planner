@@ -109,31 +109,22 @@
   z-index: 2;
 }
 
-/* מיכל טאבים */
 .tabsContainer {
   display: flex;
   gap: 1rem;
   overflow-x: auto;
-  position: sticky;
-  top: 80px; /* כווני לפי גובה ה־header/hero */
-  background: #f0f2f5; /* או לבן, לפי הרקע שלך */
-  padding: 0.5rem 0;
-  z-index: 20;
   margin-bottom: 1rem;
 }
 
-/* כפתור טאבים */
 .tabButton {
   background: none;
   border: none;
-  cursor: pointer;
   padding: 0.5rem 1rem;
   font-weight: bold;
   color: #555;
-  white-space: nowrap;
+  cursor: pointer;
 }
 
-/* טאבים פעילים */
 .tabButtonActive {
   color: #5850ec;
   border-bottom: 2px solid #5850ec;

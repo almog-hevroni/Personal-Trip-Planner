@@ -33,6 +33,7 @@ const tripSchema = new Schema(
     title: { type: String, trim: true, required: true },
     type: { type: String, enum: ["bike", "trek"], required: true },
     description: { type: String, trim: true, default: "" }, // תיאור קצר למסלול
+    location: { type: String, trim: true, required: true },
 
     // השדות החדשים:
     startingPoint: { type: String, required: true },

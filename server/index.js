@@ -1,21 +1,18 @@
 // server/index.js
-import "dotenv/config"; //טוען משתני סביבה מקובץ .env
+import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 
-import { swaggerUi, specs } from "./swagger.js"; // ייבוא Swagger כדי להציג תיעוד ב־/api-docs
-import authRouter from "./routes/auth.js"; // ייבוא רוטים של אימות משתמשים
+import { swaggerUi, specs } from "./swagger.js"; // ← תוקן
+import authRouter from "./routes/auth.js";
 import tripsRouter from "./routes/trips.js";
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-// Middlewares
-//במסגרת Express Middleware הוא פשוט פונקציה (או אוסף פונקציות) שמתווכת בין בקשת HTTP שנכנסת (request) לבין התשובה שיוצאת (response).
-//היא מאפשרת “להישכב” על הזרימה, לבצע לוגיקה, לשנות נתונים או לחסום את הבקשה לפני שהיא מגיעה ל־route עצמו.
-app.use(cors()); // מאפשר גישה ממקורות שונים
-app.use(express.json()); // מאפשר קריאת JSON בבקשות
+// Middlewares גלובליים
+app.use(cors());
+app.use(express.json());
 
 // חיבור ל-MongoDB
 mongoose
@@ -23,18 +20,25 @@ mongoose
   .then(() => console.log("✅ Connected to MongoDB"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// רישום רוטים
-app.use("/api/auth", authRouter); // כל נתיב שמתחיל ב־/api/auth/* עובר ל־authRouter
-app.use("/api/trips", tripsRouter); // כל נתיב שמתחיל ב־/api/trips/* עובר ל־tripsRouter
-
-// תיעוד ב-Swagger UI
+// תיעוד Swagger UI ב-/api-docs
 app.use(
-  "/api-docs", /// <-- כאן נוצרת הכתובת http://localhost:5000/api-docs
+  "/api-docs",
   swaggerUi.serve,
   swaggerUi.setup(specs, { explorer: true })
 );
 
+// רישום רוטים
+app.use("/api/auth", authRouter);
+app.use("/api/trips", tripsRouter);
+
+// Error-handler גלובלי
+app.use((err, req, res, next) => {
+  const status = err.status || 500;
+  res.status(status).json({ message: err.message || "Server error" });
+});
+
 // הפעלת השרת
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 API listening on http://localhost:${PORT}`);
 });

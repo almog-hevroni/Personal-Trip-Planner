@@ -1,15 +1,10 @@
-// server/routes/trips.js
+// File: server/routes/trips.js
 
 import express from "express";
-import Trip from "../models/Trip.js";
 import { authenticateToken } from "../middleware/authMiddleware.js";
-import { fetchWeather, fetchImage } from "../utils/externalData.js";
-import OpenAI from "openai";
+import * as tripCtrl from "../controllers/tripController.js";
 
 const router = express.Router();
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 /**
  * @openapi
@@ -17,6 +12,15 @@ const openai = new OpenAI({
  *   schemas:
  *     Trip:
  *       type: object
+ *       required:
+ *         - title
+ *         - type
+ *         - location
+ *         - startingPoint
+ *         - endingPoint
+ *         - totalLengthKm
+ *         - days
+ *         - route
  *       properties:
  *         userId:
  *           type: string
@@ -26,6 +30,8 @@ const openai = new OpenAI({
  *           type: string
  *           enum: [bike, trek]
  *         description:
+ *           type: string
+ *         location:
  *           type: string
  *         startingPoint:
  *           type: string
@@ -37,6 +43,12 @@ const openai = new OpenAI({
  *           type: array
  *           items:
  *             type: object
+ *             required:
+ *               - day
+ *               - lengthKm
+ *               - startingPoint
+ *               - endingPoint
+ *               - description
  *             properties:
  *               day:
  *                 type: integer
@@ -48,14 +60,14 @@ const openai = new OpenAI({
  *                 type: string
  *               description:
  *                 type: string
- *         weather:
- *           type: object
- *         imageUrl:
- *           type: string
  *         route:
  *           type: array
  *           items:
  *             type: object
+ *             required:
+ *               - lat
+ *               - lng
+ *               - day
  *             properties:
  *               lat:
  *                 type: number
@@ -63,15 +75,17 @@ const openai = new OpenAI({
  *                 type: number
  *               day:
  *                 type: integer
- *       required:
- *         - title
- *         - type
- *         - description
- *         - startingPoint
- *         - endingPoint
- *         - totalLengthKm
- *         - days
- *         - route
+ *         imageUrl:
+ *           type: string
+ *         weather:
+ *           type: object
+ */
+
+/**
+ * @openapi
+ * tags:
+ *   - name: Trips
+ *     description: CRUD operations for trips
  */
 
 /**
@@ -92,17 +106,34 @@ const openai = new OpenAI({
  *               items:
  *                 $ref: '#/components/schemas/Trip'
  */
-router.get("/", authenticateToken, async (req, res) => {
-  try {
-    const trips = await Trip.find({ userId: req.user.userId }).sort({
-      createdAt: -1,
-    });
-    res.json(trips);
-  } catch (err) {
-    console.error("Fetch trips error:", err);
-    res.status(500).json({ message: "Failed to fetch trips" });
-  }
-});
+router.get("/", authenticateToken, tripCtrl.getAll);
+
+/**
+ * @openapi
+ * /api/trips:
+ *   post:
+ *     summary: Save a trip object to the database
+ *     tags: [Trips]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       description: Trip data to save
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Trip'
+ *     responses:
+ *       201:
+ *         description: Trip saved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Trip'
+ *       400:
+ *         description: Validation error
+ */
+router.post("/", authenticateToken, tripCtrl.create);
 
 /**
  * @openapi
@@ -133,91 +164,34 @@ router.get("/", authenticateToken, async (req, res) => {
  *       500:
  *         description: Server error
  */
-router.get("/:id", authenticateToken, async (req, res) => {
-  try {
-    const trip = await Trip.findById(req.params.id).lean();
-    if (!trip) return res.status(404).json({ message: "Trip not found" });
-
-    // if there's at least one route point, fetch weather
-    if (Array.isArray(trip.route) && trip.route.length > 0) {
-      const { lat, lng } = trip.route[0];
-      try {
-        const weather = await fetchWeather(lat, lng);
-        trip.weather = weather;
-      } catch (err) {
-        console.warn("weather API failed:", err.message);
-        trip.weather = { forecast: [] };
-      }
-    } else {
-      trip.weather = { forecast: [] };
-    }
-
-    res.json(trip);
-  } catch (err) {
-    console.error("Fetch single trip error:", err);
-    res.status(500).json({ message: "Server error" });
-  }
-});
+router.get("/:id", authenticateToken, tripCtrl.getOne);
 
 /**
  * @openapi
- * /api/trips:
- *   post:
- *     summary: Save a trip object to the database
+ * /api/trips/{id}:
+ *   delete:
+ *     summary: Delete a trip by its ID
  *     tags: [Trips]
  *     security:
  *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Trip'
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The MongoDB ObjectId of the trip
  *     responses:
- *       201:
- *         description: Trip saved successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Trip'
- *       400:
- *         description: Validation error
+ *       200:
+ *         description: Trip deleted successfully
+ *       403:
+ *         description: Not authorized to delete this trip
+ *       404:
+ *         description: Trip not found
+ *       500:
+ *         description: Server error
  */
-router.post("/", authenticateToken, async (req, res) => {
-  const {
-    title,
-    type,
-    description,
-    startingPoint,
-    endingPoint,
-    totalLengthKm,
-    days,
-    imageUrl,
-    route,
-  } = req.body;
-
-  try {
-    const trip = new Trip({
-      userId: req.user.userId,
-      title,
-      type,
-      description,
-      startingPoint,
-      endingPoint,
-      totalLengthKm,
-      days,
-      imageUrl,
-      route,
-    });
-    await trip.save();
-    res.status(201).json(trip);
-  } catch (err) {
-    console.error("Save trip error:", err);
-    res
-      .status(400)
-      .json({ message: "Failed to save trip", error: err.message });
-  }
-});
+router.delete("/:id", authenticateToken, tripCtrl.remove);
 
 /**
  * @openapi
@@ -254,73 +228,6 @@ router.post("/", authenticateToken, async (req, res) => {
  *       500:
  *         description: Server or AI error
  */
-router.post("/generate", authenticateToken, async (req, res) => {
-  const { location, type } = req.body;
-
-  /* 1️⃣  Build prompt – do NOT ask GPT for weather or images */
-  const prompt = `
-Generate a ${type} trip for "${location}", broken down by day, with map-ready geodata and vivid descriptions.
-
-Rules:
-- If type is "bike": exactly 2 consecutive days; each day ≤ 60 km; total ≤ 120 km.
-- If type is "trek": 3 or more days; each day 5–15 km; the trip must form a loop (startingPoint = endingPoint).
-
-Return exactly one JSON object (no markdown, no commentary):
-{
-  "title": "<string>",
-  "type": "${type}",
-  "route": [ { "lat": <number>, "lng": <number>, "day": 1 }, … ],
-  "startingPoint": "<string>",
-  "endingPoint": "<string>",
-  "totalLengthKm": <number>,
-  "days": [
-    { "day": 1, "lengthKm": <number>, "startingPoint": "<string>", "endingPoint": "<string>", "description": "<string>" }
-    /* repeat for each day */
-  ]
-}
-
-If you cannot satisfy constraints, return:
-{ "error": "Could not generate trip with these constraints, please try again." }
-`;
-
-  try {
-    /* 2️⃣  Get itinerary from OpenAI */
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini", // or "gpt-4o"
-      messages: [
-        { role: "system", content: "You are a trip-itinerary generator." },
-        { role: "user", content: prompt },
-      ],
-    });
-
-    const tripData = JSON.parse(completion.choices[0].message.content);
-    if (tripData.error) {
-      return res.status(400).json({ message: tripData.error });
-    }
-
-    /* 3️⃣  Enrich with free external data */
-    const { lat, lng } = tripData.route[0]; // first overnight stop
-
-    console.log("Fetching weather and image for:", location, lat, lng);
-
-    try {
-      const [weather, imageUrl] = await Promise.all([
-        fetchWeather(lat, lng),
-        fetchImage(location),
-      ]);
-      tripData.weather = weather;
-      tripData.imageUrl = imageUrl;
-    } catch (extErr) {
-      console.warn("External API error:", extErr.message);
-      tripData.imageUrl = "";
-    }
-
-    /* 4️⃣  Send to client (and let front-end decide whether to save) */
-    return res.json(tripData);
-  } catch (err) {
-    console.error("AI generation error:", err);
-    return res.status(500).json({ message: "Failed to generate trip" });
-  }
-});
+router.post("/generate", authenticateToken, tripCtrl.generate);
 
 export default router;

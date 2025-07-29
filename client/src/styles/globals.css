@@ -17,6 +17,7 @@ body {
   color: var(--clr-text-dark);
   min-width: 320px;
   min-height: 100vh;
+  overflow-x: hidden; /* ← הפתרון */
 }
 
 /* קישורים */

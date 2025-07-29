@@ -1,5 +1,5 @@
 :root {
-  --font-base: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --font-base: system-ui, Helvetica, Arial, sans-serif;
   --line-height-base: 1.5;
   --font-weight-base: 400;
 
@@ -16,6 +16,6 @@
     --clr-text-dark: #213547;
     --clr-bg-dark: #ffffff;
     --clr-primary-hover: #8489ea;
-    --clr-secondary: #f97316;
+    --clr-secondary: #62ae90;
   }
 }
