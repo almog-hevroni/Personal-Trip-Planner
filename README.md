@@ -1,7 +1,7 @@
 # Trip Planner - AI-Powered Adventure Planning Platform
 
 <p align="center">
-  <img src="public/trip-planner-logo.png" alt="Trip Planner Logo" width="200">
+  <img src="client/public/images/trip_planner_logo.png" alt="Trip Planner Logo" width="200">
 </p>
 
 _A sophisticated full-stack web application that leverages AI to generate personalized bike and trekking routes with real-time weather data and interactive mapping._
