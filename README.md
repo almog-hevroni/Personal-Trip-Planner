@@ -12,8 +12,6 @@ Trip Planner is an innovative travel planning platform that transforms location 
 
 ## 🎬 Live Demo
 
-🌐 **[Visit Trip Planner](https://your-deployed-url.com)**
-
 📹 **[Watch Demo Video](https://your-video-url.com)**
 
 _Experience the complete flow:_

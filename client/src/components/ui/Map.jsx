@@ -77,9 +77,8 @@ function RoutingLine({ points }) {
 export default function Map({ points = [], type }) {
   const center = points[0] || { lat: 32.08, lng: 34.78 };
 
-  // טיפול במסלול מסוג "trek" – להסיר נקודת סיום כפולה
+  // בדיקה כללית: האם נקודת התחלה = נקודת סיום? אם כן – חותכים את הסיום (כדי שלא תופיע פעמיים)
   const displayPoints =
-    type === "trek" &&
     points.length > 1 &&
     points[0].lat === points[points.length - 1].lat &&
     points[0].lng === points[points.length - 1].lng
@@ -102,7 +101,7 @@ export default function Map({ points = [], type }) {
         </Marker>
       ))}
 
-      <RoutingLine points={points} />
+      <RoutingLine points={displayPoints} />
     </MapContainer>
   );
 }
