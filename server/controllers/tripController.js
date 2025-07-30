@@ -74,7 +74,7 @@ export async function generate(req, res, next) {
 
   Rules:
   - If type is "bike": exactly 2 consecutive days; each day ≤ 60 km; total ≤ 120 km.
-  - If type is "trek": 3 or more days; each day 5–15 km; the trip must form a loop (startingPoint = endingPoint).
+  - If type is "trek": each day 5–15 km; the trip must form a loop (startingPoint = endingPoint).
 
   Return exactly one JSON object (no markdown, no commentary):
   {
@@ -111,14 +111,24 @@ export async function generate(req, res, next) {
 
     // Enrich with weather and image
     const { lat, lng } = tripData.route[0];
+    console.log("Fetching weather and image for:", location, lat, lng);
     try {
       tripData.weather = await fetchWeather(lat, lng);
-    } catch {
+    } catch (weatherErr) {
+      if (weatherErr.response?.status === 429) {
+        console.error(
+          "Weather API error: 429 Too Many Requests – quota exceeded"
+        );
+      } else {
+        console.error("fetchWeather error:", weatherErr);
+      }
       tripData.weather = { forecast: [] };
     }
+
     try {
       tripData.imageUrl = await fetchImage(location);
-    } catch {
+    } catch (imageErr) {
+      console.error("fetchImage error:", imageErr);
       tripData.imageUrl = "";
     }
 

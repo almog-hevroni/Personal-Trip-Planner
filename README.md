@@ -28,7 +28,7 @@ _Experience the complete flow:_
 - **AI-Powered Itineraries**: Leverages OpenAI GPT-4 to create detailed day-by-day trip plans
 - **Two Trip Types**:
   - **Bike Routes**: 2-day adventures with max 60km per day
-  - **Trekking Loops**: 3+ day hiking circuits (5-15km daily) that return to starting point
+  - **Trekking Loops**: Routes of 5-15km per day that start and end at the same point
 - **Smart Constraints**: Automatically enforces distance limits and route logic
 
 ### Interactive Visualization
@@ -47,7 +47,6 @@ _Experience the complete flow:_
 
 - **Secure Authentication**: JWT-based auth with bcrypt password hashing
 - **Personal Dashboard**: Quick access to recent trips and trip history
-- **Responsive Design**: Seamless experience across all devices
 - **Background Videos**: Immersive visual experience with autoplay videos
 
 ## 🏗️ System Architecture
@@ -110,47 +109,189 @@ server/
 └── swagger.js             # API documentation
 ```
 
-### Database Schema
+## 💾 Database Configuration & Management
 
-#### User Model
+### MongoDB Setup & Connection
+
+The application uses MongoDB as its primary database, managed through Mongoose ODM for elegant schema definition and data validation.
+
+#### Connection Configuration
 
 ```javascript
-{
-  name: String (required),
-  email: String (required, unique),
-  passwordHash: String (required),
-  createdAt: Date
+// server/index.js
+import mongoose from "mongoose";
+
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ Connected to MongoDB"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
+```
+
+#### Environment Variables
+
+```bash
+# Local Development
+MONGO_URI=mongodb://localhost:27017/tripplanner
+
+# Production (MongoDB Atlas)
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/tripplanner
+```
+
+### Data Models & Relationships
+
+#### User Schema with Security Features
+
+```javascript
+// server/models/User.js
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true, // Ensures no duplicate emails
+      lowercase: true, // Normalizes email format
+      trim: true,
+    },
+    passwordHash: {
+      type: String,
+      required: true, // Stores bcrypt-hashed passwords
+    },
+  },
+  {
+    timestamps: true, // Auto-generates createdAt/updatedAt
+  }
+);
+```
+
+#### Trip Schema with Geospatial Data
+
+```javascript
+// server/models/Trip.js
+const tripSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User", // References User collection
+      required: true,
+    },
+    title: { type: String, trim: true, required: true },
+    type: {
+      type: String,
+      enum: ["bike", "trek"], // Enforces valid trip types
+      required: true,
+    },
+    location: { type: String, trim: true, required: true },
+
+    // Geospatial route data
+    route: [
+      {
+        lat: { type: Number, required: true },
+        lng: { type: Number, required: true },
+        day: { type: Number, required: true },
+      },
+    ],
+
+    // Daily breakdown structure
+    days: [
+      {
+        day: { type: Number, required: true },
+        lengthKm: { type: Number, required: true },
+        startingPoint: { type: String, required: true },
+        endingPoint: { type: String, required: true },
+        description: { type: String, required: true },
+      },
+    ],
+
+    totalLengthKm: { type: Number, required: true },
+    imageUrl: { type: String },
+  },
+  {
+    timestamps: true,
+  }
+);
+```
+
+### Data Access Patterns
+
+#### Repository Pattern Implementation
+
+The application uses a clean architecture with repository pattern for data access:
+
+```javascript
+// server/repositories/tripRepository.js
+export async function findByUserId(userId) {
+  return Trip.find({ userId }).sort({ createdAt: -1 });
+}
+
+export async function findByIdAndUserId(tripId, userId) {
+  return Trip.findOne({ _id: tripId, userId });
+}
+
+export async function create(tripData) {
+  const trip = new Trip(tripData);
+  return trip.save();
 }
 ```
 
-#### Trip Model
+#### Service Layer Logic
 
 ```javascript
-{
-  userId: ObjectId (ref: User),
-  title: String,
-  type: String (enum: ['bike', 'trek']),
-  description: String,
-  location: String,
-  startingPoint: String,
-  endingPoint: String,
-  totalLengthKm: Number,
-  imageUrl: String,
-  days: [{
-    day: Number,
-    lengthKm: Number,
-    startingPoint: String,
-    endingPoint: String,
-    description: String
-  }],
-  route: [{
-    lat: Number,
-    lng: Number,
-    day: Number
-  }],
-  createdAt: Date
+// server/services/tripService.js
+export async function listUserTrips(userId) {
+  return tripRepo.findByUserId(userId);
+}
+
+export async function saveTrip(tripData) {
+  // Add image from external API
+  if (tripData.location) {
+    tripData.imageUrl = await fetchImage(tripData.location);
+  }
+  return tripRepo.create(tripData);
 }
 ```
+
+### Database Indexes & Performance
+
+MongoDB automatically creates indexes for:
+
+- `_id` fields (primary key)
+- `email` field in User collection (unique constraint)
+- `userId` field in Trip collection (for efficient user queries)
+
+### Data Validation & Security
+
+- **Schema Validation**: Mongoose enforces data types and required fields
+- **Input Sanitization**: `trim` removes whitespace, `lowercase` normalizes emails
+- **Reference Integrity**: ObjectId references ensure valid user-trip relationships
+- **Password Security**: Only hashed passwords stored, never plaintext
+
+### MongoDB Atlas Production Setup
+
+For production deployment:
+
+1. **Create MongoDB Atlas Cluster**
+
+   ```bash
+   # Sign up at https://cloud.mongodb.com
+   # Create new project and cluster
+   # Configure network access (IP whitelist)
+   ```
+
+2. **Connection String Configuration**
+
+   ```bash
+   MONGO_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/tripplanner?retryWrites=true&w=majority
+   ```
+
+3. **Environment-Specific Databases**
+   - Development: `tripplanner-dev`
+   - Staging: `tripplanner-staging`
+   - Production: `tripplanner-prod`
 
 ## 🔧 Technical Implementation
 

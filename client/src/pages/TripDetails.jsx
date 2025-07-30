@@ -107,12 +107,12 @@ export default function TripDetails() {
           </FormGroup>
         </div>
 
-        {/* Info Card */}
+        {/* Info Card — התיקון נמצא כאן */}
         <div className={styles.card}>
           <p className={styles.text}>
-            <p className={styles.text}>
-              <strong>Location:</strong> {trip.location}
-            </p>
+            <strong>Location:</strong> {trip.location}
+          </p>
+          <p className={styles.text}>
             <strong>Type:</strong> {trip.type}
           </p>
           <p className={styles.text}>
