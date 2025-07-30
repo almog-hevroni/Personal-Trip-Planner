@@ -4,7 +4,7 @@
   <img src="public/trip-planner-logo.png" alt="Trip Planner Logo" width="200">
 </p>
 
-*A sophisticated full-stack web application that leverages AI to generate personalized bike and trekking routes with real-time weather data and interactive mapping.*
+_A sophisticated full-stack web application that leverages AI to generate personalized bike and trekking routes with real-time weather data and interactive mapping._
 
 ## 📋 Project Overview
 
@@ -16,7 +16,8 @@ Trip Planner is an innovative travel planning platform that transforms location 
 
 📹 **[Watch Demo Video](https://your-video-url.com)**
 
-*Experience the complete flow:*
+_Experience the complete flow:_
+
 - User authentication and personalization
 - AI-powered route generation
 - Interactive trip visualization
@@ -25,23 +26,27 @@ Trip Planner is an innovative travel planning platform that transforms location 
 ## 🚀 Key Features
 
 ### Intelligent Trip Generation
+
 - **AI-Powered Itineraries**: Leverages OpenAI GPT-4 to create detailed day-by-day trip plans
-- **Two Trip Types**: 
+- **Two Trip Types**:
   - **Bike Routes**: 2-day adventures with max 60km per day
   - **Trekking Loops**: 3+ day hiking circuits (5-15km daily) that return to starting point
 - **Smart Constraints**: Automatically enforces distance limits and route logic
 
 ### Interactive Visualization
+
 - **Dynamic Route Mapping**: Real-time route calculation using OSRM/Mapbox APIs
 - **Leaflet Integration**: Interactive maps with markers, tooltips, and polyline routes
 - **Day-by-Day Breakdown**: Tabbed interface showing detailed daily segments
 
 ### Real-Time Data Integration
+
 - **Weather Forecasts**: 3-day weather predictions using Open-Meteo API
 - **Location Imagery**: Stunning visuals from Unsplash API
 - **Auto-complete Search**: Smart location suggestions with Nominatim API
 
 ### User Experience
+
 - **Secure Authentication**: JWT-based auth with bcrypt password hashing
 - **Personal Dashboard**: Quick access to recent trips and trip history
 - **Responsive Design**: Seamless experience across all devices
@@ -52,6 +57,7 @@ Trip Planner is an innovative travel planning platform that transforms location 
 ### Technology Stack
 
 #### Frontend (React + Vite)
+
 ```
 client/
 ├── src/
@@ -81,6 +87,7 @@ client/
 ```
 
 #### Backend (Node.js + Express)
+
 ```
 server/
 ├── controllers/
@@ -108,6 +115,7 @@ server/
 ### Database Schema
 
 #### User Model
+
 ```javascript
 {
   name: String (required),
@@ -118,6 +126,7 @@ server/
 ```
 
 #### Trip Model
+
 ```javascript
 {
   userId: ObjectId (ref: User),
@@ -171,7 +180,7 @@ const osrmUrl = `https://router.project-osrm.org/route/v1/walking/${points}`;
 // Fallback: Mapbox Directions API
 directionsClient.getDirections({
   profile: "walking",
-  waypoints: points.map(p => ({ coordinates: [p.lng, p.lat] }))
+  waypoints: points.map((p) => ({ coordinates: [p.lng, p.lat] })),
 });
 ```
 
@@ -198,21 +207,21 @@ api.interceptors.request.use((config) => {
 
 ### Authentication Endpoints
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| POST | `/api/auth/register` | Create new user account | No |
-| POST | `/api/auth/login` | Authenticate user | No |
-| POST | `/api/auth/logout` | End user session | Yes |
+| Method | Endpoint             | Description             | Auth Required |
+| ------ | -------------------- | ----------------------- | ------------- |
+| POST   | `/api/auth/register` | Create new user account | No            |
+| POST   | `/api/auth/login`    | Authenticate user       | No            |
+| POST   | `/api/auth/logout`   | End user session        | Yes           |
 
 ### Trip Endpoints
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| GET | `/api/trips` | Get all user trips | Yes |
-| POST | `/api/trips` | Save new trip | Yes |
-| GET | `/api/trips/:id` | Get trip with weather | Yes |
-| DELETE | `/api/trips/:id` | Delete trip | Yes |
-| POST | `/api/trips/generate` | Generate AI trip | Yes |
+| Method | Endpoint              | Description           | Auth Required |
+| ------ | --------------------- | --------------------- | ------------- |
+| GET    | `/api/trips`          | Get all user trips    | Yes           |
+| POST   | `/api/trips`          | Save new trip         | Yes           |
+| GET    | `/api/trips/:id`      | Get trip with weather | Yes           |
+| DELETE | `/api/trips/:id`      | Delete trip           | Yes           |
+| POST   | `/api/trips/generate` | Generate AI trip      | Yes           |
 
 ### Swagger Documentation
 
@@ -221,18 +230,62 @@ Access interactive API documentation at: `http://localhost:5000/api-docs`
 ## 🚀 Installation & Setup
 
 ### Prerequisites
-- Node.js 18+
-- MongoDB instance
-- API Keys:
-  - OpenAI API key
-  - Mapbox access token
-  - Unsplash access key
+
+#### System Requirements
+
+- **Node.js 18+**
+
+  ```bash
+  # Check version
+  node --version
+
+  # Install via nvm (recommended)
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+  nvm install 18
+  nvm use 18
+  ```
+
+- **MongoDB**
+
+  ```bash
+  # macOS (using Homebrew)
+  brew tap mongodb/brew
+  brew install mongodb-community
+  brew services start mongodb-community
+
+  # Windows (using Chocolatey)
+  choco install mongodb
+
+  # Linux (Ubuntu/Debian)
+  sudo apt-get install -y mongodb
+  sudo systemctl start mongodb
+  ```
+
+- **Git**
+
+  ```bash
+  # macOS
+  brew install git
+
+  # Windows
+  choco install git
+
+  # Linux
+  sudo apt-get install git
+  ```
+
+#### Required API Keys
+
+- OpenAI API key
+- Mapbox access token
+- Unsplash access key
 
 ### Environment Configuration
 
 Create `.env` files in both client and server directories:
 
 **Server `.env`:**
+
 ```bash
 PORT=5000
 MONGO_URI=mongodb://localhost:27017/tripplanner
@@ -242,6 +295,7 @@ UNSPLASH_KEY=your_unsplash_access_key
 ```
 
 **Client `.env`:**
+
 ```bash
 VITE_BASE_URL=http://localhost:5000/api
 VITE_MAPBOX_TOKEN=your_mapbox_token
@@ -250,37 +304,61 @@ VITE_MAPBOX_TOKEN=your_mapbox_token
 ### Installation Steps
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/yourusername/trip-planner.git
    cd trip-planner
    ```
 
 2. **Install server dependencies**
+
    ```bash
    cd server
    npm install
+
+   # Or install specific packages:
+   npm install express mongoose cors dotenv bcrypt jsonwebtoken
+   npm install axios openai @turf/turf
+   npm install swagger-jsdoc swagger-ui-express
+   npm install --save-dev nodemon
    ```
 
 3. **Install client dependencies**
+
    ```bash
    cd ../client
    npm install
+
+   # Or install specific packages:
+   npm install react react-dom react-router-dom
+   npm install axios leaflet react-leaflet
+   npm install @mapbox/mapbox-sdk leaflet-routing-machine lrm-mapbox
+   npm install framer-motion lucide-react react-icons
+   npm install --save-dev vite @vitejs/plugin-react
+   npm install --save-dev eslint @eslint/js eslint-plugin-react-hooks eslint-plugin-react-refresh
+   npm install --save-dev @types/react @types/react-dom globals
    ```
 
 4. **Start MongoDB**
+
    ```bash
+   # If installed locally
    mongod
+
+   # Or use MongoDB Atlas cloud service
    ```
 
 5. **Run the development servers**
-   
+
    Terminal 1 (Backend):
+
    ```bash
    cd server
    npm run dev
    ```
-   
+
    Terminal 2 (Frontend):
+
    ```bash
    cd client
    npm run dev
@@ -313,27 +391,32 @@ VITE_MAPBOX_TOKEN=your_mapbox_token
 ## 📱 Features Showcase
 
 ### Landing Page
+
 - Hero section with video background
 - Modal-based authentication
 - Smooth transitions to dashboard
 
 ### Trip Planner
+
 - Smart location autocomplete
 - Trip type selection (bike/trek)
 - Loading states during AI generation
 
 ### Trip Details
+
 - Full itinerary visualization
 - Interactive map with day markers
 - Weather forecast integration
 - Save functionality with notifications
 
 ### Dashboard
+
 - Welcome message with user name
 - Recent trips carousel
 - Quick access to trip creation
 
 ### My Trips
+
 - Grid layout of saved trips
 - Hover effects and animations
 - Delete functionality with confirmation modal
@@ -350,6 +433,7 @@ VITE_MAPBOX_TOKEN=your_mapbox_token
 ## 🚀 Deployment
 
 ### Frontend (Vercel/Netlify)
+
 ```bash
 cd client
 npm run build
@@ -357,11 +441,13 @@ npm run build
 ```
 
 ### Backend (Render/Railway)
+
 - Set environment variables
 - Configure start script: `node index.js`
 - Enable CORS for frontend domain
 
 ### Database (MongoDB Atlas)
+
 - Create cluster
 - Configure network access
 - Update MONGO_URI in production
@@ -390,7 +476,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👥 Authors
 
-- **Your Name** - *Full Stack Developer* - [GitHub](https://github.com/yourusername)
+- **Your Name** - _Full Stack Developer_ - [GitHub](https://github.com/yourusername)
 
 ## 🙏 Acknowledgments
 
@@ -402,4 +488,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-*Built with ❤️ using React, Node.js, and AI*
+_Built with ❤️ using React, Node.js, and AI_
