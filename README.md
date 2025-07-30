@@ -139,7 +139,7 @@ MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/tripplanner
 
 ### Data Models & Relationships
 
-#### User Schema with Security Features
+#### User Schema
 
 ```javascript
 // server/models/User.js
@@ -168,7 +168,7 @@ const userSchema = new mongoose.Schema(
 );
 ```
 
-#### Trip Schema with Geospatial Data
+#### Trip Schema
 
 ```javascript
 // server/models/Trip.js
@@ -216,60 +216,6 @@ const tripSchema = new mongoose.Schema(
 );
 ```
 
-### Data Access Patterns
-
-#### Repository Pattern Implementation
-
-The application uses a clean architecture with repository pattern for data access:
-
-```javascript
-// server/repositories/tripRepository.js
-export async function findByUserId(userId) {
-  return Trip.find({ userId }).sort({ createdAt: -1 });
-}
-
-export async function findByIdAndUserId(tripId, userId) {
-  return Trip.findOne({ _id: tripId, userId });
-}
-
-export async function create(tripData) {
-  const trip = new Trip(tripData);
-  return trip.save();
-}
-```
-
-#### Service Layer Logic
-
-```javascript
-// server/services/tripService.js
-export async function listUserTrips(userId) {
-  return tripRepo.findByUserId(userId);
-}
-
-export async function saveTrip(tripData) {
-  // Add image from external API
-  if (tripData.location) {
-    tripData.imageUrl = await fetchImage(tripData.location);
-  }
-  return tripRepo.create(tripData);
-}
-```
-
-### Database Indexes & Performance
-
-MongoDB automatically creates indexes for:
-
-- `_id` fields (primary key)
-- `email` field in User collection (unique constraint)
-- `userId` field in Trip collection (for efficient user queries)
-
-### Data Validation & Security
-
-- **Schema Validation**: Mongoose enforces data types and required fields
-- **Input Sanitization**: `trim` removes whitespace, `lowercase` normalizes emails
-- **Reference Integrity**: ObjectId references ensure valid user-trip relationships
-- **Password Security**: Only hashed passwords stored, never plaintext
-
 ### MongoDB Atlas Production Setup
 
 For production deployment:
@@ -287,11 +233,6 @@ For production deployment:
    ```bash
    MONGO_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/tripplanner?retryWrites=true&w=majority
    ```
-
-3. **Environment-Specific Databases**
-   - Development: `tripplanner-dev`
-   - Staging: `tripplanner-staging`
-   - Production: `tripplanner-prod`
 
 ## 🔧 Technical Implementation
 
