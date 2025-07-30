@@ -453,11 +453,29 @@ VITE_MAPBOX_TOKEN=your_mapbox_token
 
 ### Landing Page
 
+<p align="center">
+  <img src="client/public/images/landing-page.png" alt="Landing Page" width="800">
+</p>
+
 - Hero section with video background
 - Modal-based authentication
 - Smooth transitions to dashboard
 
+### Dashboard
+
+<p align="center">
+  <img src="client/public/images/dashboard.png" alt="Dashboard" width="800">
+</p>
+
+- Welcome message with user name
+- Recent trips carousel
+- Quick access to trip creation
+
 ### Trip Planner
+
+<p align="center">
+  <img src="client/public/images/trip-planner.png" alt="Trip Planner" width="800">
+</p>
 
 - Smart location autocomplete
 - Trip type selection (bike/trek)
@@ -465,18 +483,26 @@ VITE_MAPBOX_TOKEN=your_mapbox_token
 
 ### Trip Details
 
+<p align="center">
+  <img src="client/public/images/trip-details1.png" alt="My Trips" width="800">
+</p>
+<p align="center">
+  <img src="client/public/images/trip-details2.png" alt="My Trips" width="800">
+</p>
+<p align="center">
+  <img src="client/public/images/trip-details3.png" alt="My Trips" width="800">
+</p>
+
 - Full itinerary visualization
 - Interactive map with day markers
 - Weather forecast integration
 - Save functionality with notifications
 
-### Dashboard
-
-- Welcome message with user name
-- Recent trips carousel
-- Quick access to trip creation
-
 ### My Trips
+
+<p align="center">
+  <img src="client/public/images/my-trips.png" alt="My Trips" width="800">
+</p>
 
 - Grid layout of saved trips
 - Hover effects and animations
