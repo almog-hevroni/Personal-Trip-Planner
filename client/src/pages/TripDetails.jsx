@@ -10,6 +10,11 @@ import ItineraryTabs from "../components/ui/ItineraryTabs"; // ← ייבוא ה
 
 import styles from "../styles/pages/tripDetails.module.css";
 
+const formatDateDMY = (iso) => {
+  const [yyyy, mm, dd] = iso.split("-");
+  return `${dd}-${mm}-${yyyy}`; // 31-07-2025
+};
+
 export default function TripDetails() {
   const { state } = useLocation();
   const trip = state?.trip;
@@ -137,12 +142,12 @@ export default function TripDetails() {
           <h2 className={styles.sectionTitle}>Weather (Next 3 Days)</h2>
           {trip.weather?.forecast?.length ? (
             trip.weather.forecast.map((f) => (
-              <div key={f.dayOffset} className={styles.weatherDay}>
+              <div key={formatDateDMY(f.date)} className={styles.weatherDay}>
                 <p className={styles.text}>
-                  <strong>Day {f.dayOffset}:</strong> {f.condition}
+                  <strong>{formatDateDMY(f.date)}:</strong> {f.condition}
                 </p>
                 <p className={styles.text}>
-                  <strong>Temp:</strong> {f.minTempC}°–{f.maxTempC}°
+                  <strong>Temp:</strong> {f.minTempC}° – {f.maxTempC}°
                 </p>
               </div>
             ))

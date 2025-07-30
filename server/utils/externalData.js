@@ -47,6 +47,7 @@ export async function fetchWeather(lat, lon) {
 
   const forecast = [1, 2, 3].map((i) => ({
     dayOffset: i,
+    date: data.daily.time[i],
     minTempC: data.daily.temperature_2m_min[i],
     maxTempC: data.daily.temperature_2m_max[i],
     condition: codeToText(data.daily.weathercode[i]),
