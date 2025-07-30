@@ -70,30 +70,30 @@ export async function generate(req, res, next) {
   const { location, type } = req.body;
 
   const prompt = `
-Generate a ${type} trip for "${location}", broken down by day, with map-ready geodata and vivid descriptions.
+  Generate a ${type} trip for "${location}", broken down by day, with map-ready geodata and vivid descriptions.
 
-Rules:
-- If type is "bike": exactly 2 consecutive days; each day ≤ 60 km; total ≤ 120 km.
-- If type is "trek": 3 or more days; each day 5–15 km; the trip must form a loop (startingPoint = endingPoint).
+  Rules:
+  - If type is "bike": exactly 2 consecutive days; each day ≤ 60 km; total ≤ 120 km.
+  - If type is "trek": 3 or more days; each day 5–15 km; the trip must form a loop (startingPoint = endingPoint).
 
-Return exactly one JSON object (no markdown, no commentary):
-{
-  "title": "<string>",
-  "location": "${location}",
-  "type": "${type}",
-  "route": [ { "lat": <number>, "lng": <number>, "day": 1 }, … ],
-  "startingPoint": "<string>",
-  "endingPoint": "<string>",
-  "totalLengthKm": <number>,
-  "days": [
-    { "day": 1, "lengthKm": <number>, "startingPoint": "<string>", "endingPoint": "<string>", "description": "<string>" }
-    /* repeat for each day */
-  ]
-}
+  Return exactly one JSON object (no markdown, no commentary):
+  {
+    "title": "<string>",
+    "location": "${location}",
+    "type": "${type}",
+    "route": [ { "lat": <number>, "lng": <number>, "day": 1 }, … ],
+    "startingPoint": "<string>",
+    "endingPoint": "<string>",
+    "totalLengthKm": <number>,
+    "days": [
+      { "day": 1, "lengthKm": <number>, "startingPoint": "<string>", "endingPoint": "<string>", "description": "<string>" }
+      /* repeat for each day */
+    ]
+  }
 
-If you cannot satisfy constraints, return:
-{ "error": "Could not generate trip with these constraints, please try again." }
-`;
+  If you cannot satisfy constraints, return:
+  { "error": "Could not generate trip with these constraints, please try again." }
+  `;
 
   try {
     const completion = await openai.chat.completions.create({
