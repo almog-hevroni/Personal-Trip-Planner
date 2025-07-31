@@ -1,7 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
-
+import { useState } from "react";
 import styles from "../styles/pages/landing.module.css";
 import "../styles/utilities.css";
 
@@ -11,18 +8,8 @@ import Login from "./Login";
 import Register from "./Register";
 
 export default function Landing() {
-  const { token } = useAuth();
-  const nav = useNavigate();
-
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
-
-  // ✅ רק אם יש token ואנחנו בדף הנחיתה – נשלח לדשבורד
-  useEffect(() => {
-    if (token && window.location.pathname === "/") {
-      nav("/dashboard", { replace: true });
-    }
-  }, [token, nav]);
 
   return (
     <div className={styles.hero}>

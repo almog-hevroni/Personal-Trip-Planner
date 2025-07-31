@@ -18,7 +18,7 @@ export default function Navbar() {
   return (
     <nav className="navbar">
       {/* צד שמאל – לוגו/כותרת */}
-      <NavLink to="/" className="nav-link">
+      <NavLink to="/dashboard" className="nav-link">
         Trip Planner
       </NavLink>
 

@@ -1,11 +1,7 @@
-// client/src/App.jsx
-import React from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 
 import Navbar from "./components/ui/Navbar";
 import Landing from "./pages/Landing";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
 import TripPlanner from "./pages/TripPlanner";
 import Dashboard from "./pages/Dashboard";
 import MyTrips from "./pages/MyTrips";

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button";
@@ -24,7 +24,7 @@ export default function Dashboard() {
   }, [api]);
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper}>    
       <video className={styles.backgroundVideo} autoPlay muted loop playsInline>
         <source src="/videos/dashboard_video.mp4" type="video/mp4" />
       </video>

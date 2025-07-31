@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useApi from "../hooks/useApi";
 import { useAuth } from "../contexts/AuthContext";
@@ -9,15 +9,9 @@ import "../styles/utilities.css";
 import LoginForm from "../components/ui/LoginForm";
 
 export default function Login({ embedded = false, onSuccess }) {
-  const { token, login } = useAuth();
+  const { login } = useAuth();
   const nav = useNavigate();
   const api = useApi();
-
-  useEffect(() => {
-    if (!embedded && token) {
-      nav("/dashboard", { replace: true });
-    }
-  }, [token, nav, embedded]);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
