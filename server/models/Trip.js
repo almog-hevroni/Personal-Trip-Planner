@@ -1,16 +1,14 @@
-// server/models/Trip.js
-
 import mongoose from "mongoose";
 const { Schema, model } = mongoose;
 
-// תת־סקימה לנקודות גיאוגרפיות עם יום
+// Sub-schema for geo-coordinates with day index
 const geoPointSchema = new Schema({
   lat: { type: Number, required: true },
   lng: { type: Number, required: true },
   day: { type: Number, required: true },
 });
 
-// תת־סקימה לפוֹאִ'יי (תחנות עניין) — במידה ותחזירי נקודות כאלה
+// Sub-schema for point of interst is there are any
 const poiSchema = new Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
@@ -18,7 +16,7 @@ const poiSchema = new Schema({
   lng: { type: Number, required: true },
 });
 
-// תת־סקימה לפירוט יומי מלא
+// Sub-schema for daily itinerary details
 const dayDetailSchema = new Schema({
   day: { type: Number, required: true },
   lengthKm: { type: Number, required: true },
@@ -45,7 +43,7 @@ const tripSchema = new Schema(
     route: { type: [geoPointSchema], default: [] },
     imageUrl: { type: String },
   },
-  { timestamps: true }
+  { timestamps: true } // adds createdAt & updatedAt
 );
 
 export default model("Trip", tripSchema);

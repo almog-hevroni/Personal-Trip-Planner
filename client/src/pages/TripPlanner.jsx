@@ -1,4 +1,3 @@
-// client/src/pages/TripPlanner.jsx
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import useApi from "../hooks/useApi";
@@ -20,7 +19,7 @@ export default function TripPlanner() {
   const api = useApi();
   const nav = useNavigate();
 
-  // Fetch all countries once
+  // Load all country names once for the datalist fallback
   useEffect(() => {
     async function fetchCountries() {
       try {
@@ -39,7 +38,8 @@ export default function TripPlanner() {
     fetchCountries();
   }, []);
 
-  // Update suggestions: fetch English place names
+ // When user types >=3 chars, query OSM for place suggestions,
+  // merge with our country list, and avoid stale fetches via AbortController
   useEffect(() => {
     const controller = new AbortController();
     const timer = setTimeout(async () => {
@@ -65,6 +65,7 @@ export default function TripPlanner() {
           if (err.name !== "AbortError") console.error(err);
         }
       } else {
+        // reset to full country list
         setSuggestions(countries);
       }
     }, 300);
@@ -74,11 +75,13 @@ export default function TripPlanner() {
     };
   }, [location, countries]);
 
+  // Submits user input to backend to generate a trip, then navigates to details
   const handleGenerate = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
       const { data } = await api.post("/trips/generate", { location, type });
+      // pass trip data via state
       nav("/trip", { state: { trip: data } });
     } catch {
       window.alert("Error creating a trip.");

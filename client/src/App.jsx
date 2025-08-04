@@ -11,6 +11,7 @@ import HistoryTripDetails from "./pages/HistoryTripDetails";
 
 export default function App() {
   const { pathname } = useLocation();
+  // Hide navbar on the landing page (path === "/")
   const showNavbar = pathname !== "/";
 
   return (

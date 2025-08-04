@@ -1,5 +1,3 @@
-// server/models/User.js
-//להגדיר schema ואינטראקציה עם collection בשם users ב־MongoDB
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
@@ -12,7 +10,7 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true, // מוודא שאין שני משתמשים עם אותו מייל
+      unique: true, // prevents duplicates
       lowercase: true,
       trim: true,
     },
@@ -22,7 +20,7 @@ const userSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // יוצר שדות createdAt ו-updatedAt אוטומטית
+    timestamps: true, // adds createdAt & updatedAt
   }
 );
 

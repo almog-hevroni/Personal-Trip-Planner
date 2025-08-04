@@ -1,4 +1,3 @@
-import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { FiLogOut } from "react-icons/fi";
@@ -12,17 +11,14 @@ export default function Navbar() {
 
   const handleLogout = () => {
     logout();
-    nav("/", { replace: true }); // 👈 שולח לדף הנחיתה
+    nav("/", { replace: true }); // Navigate to the landing page
   };
 
   return (
     <nav className="navbar">
-      {/* צד שמאל – לוגו/כותרת */}
       <NavLink to="/dashboard" className="nav-link">
         Trip Planner
       </NavLink>
-
-      {/* צד ימין – כפתורי auth */}
       <div className="nav-actions">
         {token ? (
           <Button variant="secondary" onClick={handleLogout}>

@@ -1,18 +1,20 @@
-// server/utils/externalData.js
 import axios from "axios";
 
 /* ------------------------------------------------------------------
    WEATHER (Open-Meteo) – free, no key required
 ------------------------------------------------------------------- */
 export async function fetchWeather(lat, lon) {
+  // Build forecast URL for daily max/min temps and weather codes
   const url =
     `https://api.open-meteo.com/v1/forecast` +
     `?latitude=${lat}&longitude=${lon}` +
     `&daily=temperature_2m_max,temperature_2m_min,weathercode` +
     `&timezone=UTC&forecast_days=4`; // today + next 3
 
+    // Fetch data from Open-Meteo
   const { data } = await axios.get(url);
 
+  // Helper to map numeric weather codes to human-readable text
   const codeToText = (c) =>
     ({
       0: "Clear sky",
@@ -45,6 +47,7 @@ export async function fetchWeather(lat, lon) {
       99: "Heavy thunderstorm with hail",
     }[c] ?? "Unknown");
 
+    // Build forecast array for the next 3 days (skip today index 0)
   const forecast = [1, 2, 3].map((i) => ({
     dayOffset: i,
     date: data.daily.time[i],
@@ -60,14 +63,17 @@ export async function fetchWeather(lat, lon) {
    IMAGE (Unsplash) – free tier (50 req/h). Access-Key required.
 ------------------------------------------------------------------- */
 export async function fetchImage(location) {
+  // Ensure API key is set
   const key = process.env.UNSPLASH_KEY;
   if (!key) throw new Error("UNSPLASH_KEY env var missing");
 
+  // Build Unsplash photo endpoint
   const url =
     `https://api.unsplash.com/photos/random` +
     `?query=${encodeURIComponent(location)}` +
     `&orientation=landscape&content_filter=high&client_id=${key}`;
 
+    // Fetch image data
   const { data } = await axios.get(url);
   const imageUrl = data.urls.regular; // ~1080 px wide
 

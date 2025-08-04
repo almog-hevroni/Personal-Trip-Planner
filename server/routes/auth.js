@@ -5,6 +5,12 @@ import * as authCtrl from "../controllers/authController.js";
 const router = express.Router();
 
 /**
+ * Swagger/OpenAPI definitions for request/response schemas
+ * are used later by tools to generate documentation.
+ */
+
+
+/**
  * @openapi
  * components:
  *   schemas:

@@ -22,6 +22,7 @@ export default function HistoryTripDetails() {
   const { tripId } = useParams();
   const nav = useNavigate();
 
+  // Fetch trip by ID on mount
   useEffect(() => {
     let isMounted = true;
     async function fetchTrip() {
@@ -41,7 +42,7 @@ export default function HistoryTripDetails() {
 
   return (
     <div className={styles.page}>
-      {/* Hero עם תמונה ושם הטיול */}
+      {/* Hero with image + title */}
       {trip.imageUrl && (
         <div className={styles.hero}>
           <img
@@ -54,7 +55,7 @@ export default function HistoryTripDetails() {
       )}
 
       <div className={styles.container}>
-        {/* תיאור */}
+        {/* Description */}
         <div className={styles.card}>
           <h2 className={styles.sectionTitle}>Description</h2>
           {trip.description ? (
@@ -66,7 +67,7 @@ export default function HistoryTripDetails() {
           )}
         </div>
 
-        {/* מיקום, סוג ואורך כולל */}
+        {/* Basic info */}
         <div className={styles.card}>
           <p className={styles.text}>
             <strong>Location:</strong> {trip.location}
@@ -79,12 +80,12 @@ export default function HistoryTripDetails() {
           </p>
         </div>
 
-        {/* מפה */}
+        {/* Map of route */}
         <div className={styles.card}>
           <Map points={trip.route || []} type={trip.type} />
         </div>
 
-        {/* נקודת מוצא וסיום */}
+        {/* Starting and ending points */}
         <div className={styles.card}>
           <p className={styles.text}>
             <strong>Starting Point:</strong> {trip.startingPoint}
@@ -118,7 +119,7 @@ export default function HistoryTripDetails() {
           )}
         </div>
 
-        {/* כפתור חזרה */}
+        {/* Navigation buttons */}
         <div className={styles.buttonsWrapper}>
           <Button variant="primary" onClick={() => nav("/trips")}>
             Back to My Trips

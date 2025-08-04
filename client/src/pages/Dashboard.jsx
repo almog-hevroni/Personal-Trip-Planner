@@ -11,6 +11,7 @@ export default function Dashboard() {
   const api = useApi();
   const [recentTrips, setRecentTrips] = useState([]);
 
+  // load up to 3 most recent trips
   useEffect(() => {
     const fetchTrips = async () => {
       try {

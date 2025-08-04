@@ -1,14 +1,10 @@
-// File: server/controllers/tripController.js
-
 import * as tripSvc from "../services/tripService.js";
 import { fetchWeather, fetchImage } from "../utils/externalData.js";
 import OpenAI from "openai";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-/**
- * Get all trips for the authenticated user
- */
+// GET /api/trips
 export async function getAll(req, res, next) {
   try {
     const trips = await tripSvc.listUserTrips(req.user.userId);
@@ -18,9 +14,7 @@ export async function getAll(req, res, next) {
   }
 }
 
-/**
- * Get a single trip by its ID (with weather enrichment)
- */
+// GET /api/trips/:id
 export async function getOne(req, res, next) {
   try {
     const trip = await tripSvc.getTrip(req.params.id, req.user.userId);
@@ -38,9 +32,7 @@ export async function getOne(req, res, next) {
   }
 }
 
-/**
- * Create & save a new trip
- */
+// POST /api/trips
 export async function create(req, res, next) {
   try {
     const data = { ...req.body, userId: req.user.userId };
@@ -51,9 +43,7 @@ export async function create(req, res, next) {
   }
 }
 
-/**
- * Delete a trip by its ID
- */
+// DELETE /api/trips/:id
 export async function remove(req, res, next) {
   try {
     await tripSvc.deleteTrip(req.params.id, req.user.userId);
@@ -63,17 +53,16 @@ export async function remove(req, res, next) {
   }
 }
 
-/**
- * Generate a full trip itinerary via LLM
- */
+// POST /api/trips/generate
 export async function generate(req, res, next) {
   const { location, type } = req.body;
 
+  // Prompt for LLM to generate a valid trip JSON only
   const prompt = `
   Generate a ${type} trip for "${location}", broken down by day, with map-ready geodata and vivid descriptions.
 
   Rules:
-  - If type is "bike": exactly 2 consecutive days; each day ≤ 60 km; total ≤ 120 km.
+  - If type is "bike": exactly 2 consecutive days; each day 60 km or less; total of 120 km or less.
   - If type is "trek": each day 5–15 km; the trip must form a loop (startingPoint = endingPoint).
 
   Return exactly one JSON object (no markdown, no commentary):
@@ -96,6 +85,7 @@ export async function generate(req, res, next) {
   `;
 
   try {
+    // Send prompt to OpenAI
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -104,12 +94,13 @@ export async function generate(req, res, next) {
       ],
     });
 
+    // Parse the returned JSON
     const tripData = JSON.parse(completion.choices[0].message.content);
     if (tripData.error) {
       return res.status(400).json({ message: tripData.error });
     }
 
-    // Enrich with weather and image
+    // Enrich with weather
     const { lat, lng } = tripData.route[0];
     console.log("Fetching weather and image for:", location, lat, lng);
     try {
@@ -125,6 +116,7 @@ export async function generate(req, res, next) {
       tripData.weather = { forecast: [] };
     }
 
+    // Enrich with image
     try {
       tripData.imageUrl = await fetchImage(location);
     } catch (imageErr) {

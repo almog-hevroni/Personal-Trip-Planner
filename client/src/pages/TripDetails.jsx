@@ -6,13 +6,14 @@ import useApi from "../hooks/useApi";
 import Map from "../components/ui/Map";
 import FormGroup from "../components/ui/FormGroup";
 import Button from "../components/ui/Button";
-import ItineraryTabs from "../components/ui/ItineraryTabs"; // ← ייבוא הרכיב
+import ItineraryTabs from "../components/ui/ItineraryTabs";
 
 import styles from "../styles/pages/tripDetails.module.css";
 
+// Helper to format YYYY-MM-DD → DD-MM-YYYY
 const formatDateDMY = (iso) => {
   const [yyyy, mm, dd] = iso.split("-");
-  return `${dd}-${mm}-${yyyy}`; // 31-07-2025
+  return `${dd}-${mm}-${yyyy}`;
 };
 
 export default function TripDetails() {
@@ -28,6 +29,7 @@ export default function TripDetails() {
 
   const [notification, setNotification] = useState("");
 
+  // Hide notification after 3s
   useEffect(() => {
     if (!notification) return;
     const timer = setTimeout(() => setNotification(""), 3000);
@@ -35,6 +37,7 @@ export default function TripDetails() {
   }, [notification]);
 
   if (!trip) {
+    // No trip in state -> redirect back
     return (
       <div className={styles.page}>
         <div className={styles.container}>
@@ -49,13 +52,13 @@ export default function TripDetails() {
     );
   }
 
+  // Save trip metadata to backend
   const handleSave = async () => {
     setSaving(true);
     try {
       await api.post("/trips", { ...trip, title, description });
-      // מראה Toast
       setNotification("The trip was saved successfully!");
-      // ממתין 2 שניות לפני המעבר ל־MyTrips
+      //Wait for 2 sec then redirect.
       setTimeout(() => {
         nav("/trips");
       }, 2000);
@@ -72,7 +75,7 @@ export default function TripDetails() {
         <div className={styles.notification}>{notification}</div>
       )}
 
-      {/* Hero עם תמונה וכותרת מעליה */}
+      {/* Hero image + title */}
       {trip.imageUrl && (
         <div className={styles.hero}>
           <img src={trip.imageUrl} alt="Trip" className={styles.heroImage} />
@@ -107,7 +110,7 @@ export default function TripDetails() {
           </FormGroup>
         </div>
 
-        {/* Info Card — התיקון נמצא כאן */}
+        {/* Static trip info */}
         <div className={styles.card}>
           <p className={styles.text}>
             <strong>Location:</strong> {trip.location}
@@ -132,7 +135,6 @@ export default function TripDetails() {
         </div>
 
         {/* Daily Breakdown */}
-        {/* Itinerary כטאבים */}
         <div className={styles.card}>
           <ItineraryTabs days={trip.days} />
         </div>
@@ -156,7 +158,7 @@ export default function TripDetails() {
           )}
         </div>
 
-        {/* Actions */}
+        {/* Save & back buttons */}
         <div className={styles.buttonsWrapper}>
           {token && (
             <Button variant="primary" onClick={handleSave} disabled={saving}>

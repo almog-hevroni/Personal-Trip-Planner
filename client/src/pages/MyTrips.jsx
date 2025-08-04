@@ -1,5 +1,3 @@
-// File: client/src/pages/MyTrips.jsx
-
 import React, { useEffect, useState } from "react";
 import useApi from "../hooks/useApi";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +12,7 @@ export default function MyTrips() {
   const api = useApi();
   const nav = useNavigate();
 
+  // Fetch all trips belonging to user
   useEffect(() => {
     async function fetchTrips() {
       try {
@@ -26,14 +25,17 @@ export default function MyTrips() {
     fetchTrips();
   }, [api]);
 
+  // Open confirmation modal
   const handleDeleteClick = (trip) => {
     setSelectedTrip(trip);
     setShowModal(true);
   };
 
+  // Delete confirmed trip
   const confirmDelete = async () => {
     try {
       await api.delete(`/trips/${selectedTrip._id}`);
+      // Remove from UI
       setTrips((prev) => prev.filter((t) => t._id !== selectedTrip._id));
       setShowModal(false);
     } catch {
@@ -48,12 +50,12 @@ export default function MyTrips() {
 
   return (
     <div className={styles.wrapper}>
-      {/* רקע וידאו */}
+      {/* Background video loop */}
       <video className={styles.backgroundVideo} autoPlay muted loop playsInline>
         <source src="/videos/dashboard_video.mp4" type="video/mp4" />
       </video>
 
-      {/* תוכן העמוד */}
+      {/* Page content */}
       <div className={styles.page}>
         <h1 className={styles.heading}>Trip History</h1>
 
@@ -75,8 +77,7 @@ export default function MyTrips() {
                   <strong>Location:</strong> {trip.location}
                 </p>
                 <p>{trip.description || "No Description"}</p>
-
-                {/* כפתורי פעולה: Show Details משמאל, Trash מימין */}
+                
                 <div className={styles.cardActions}>
                   <Button
                     variant="primary"
@@ -99,7 +100,7 @@ export default function MyTrips() {
         )}
       </div>
 
-      {/* מודאל אישור מחיקה */}
+      {/* Deletion confirmation modal */}
       {showModal && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>

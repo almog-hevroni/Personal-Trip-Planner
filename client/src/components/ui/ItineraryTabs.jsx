@@ -1,6 +1,5 @@
-// client/src/components/ui/ItineraryTabs.jsx
-import React, { useState } from "react";
-import "../../styles/components/itineraryTabs.css"; // תוודאי שהוא קיים
+import { useState } from "react";
+import "../../styles/components/itineraryTabs.css";
 
 export default function ItineraryTabs({ days }) {
   const [selectedDay, setSelectedDay] = useState(0);

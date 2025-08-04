@@ -1,5 +1,3 @@
-// File: server/routes/trips.js
-
 import express from "express";
 import { authenticateToken } from "../middleware/authMiddleware.js";
 import * as tripCtrl from "../controllers/tripController.js";

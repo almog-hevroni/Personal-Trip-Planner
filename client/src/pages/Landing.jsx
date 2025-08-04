@@ -14,12 +14,14 @@ export default function Landing() {
   return (
     <div className={styles.hero}>
       <div className={styles.overlay} />
+      {/* Main hero text */}
       <header className={styles.header}>
         <h1 className={styles.title}>Trip Planner</h1>
         <p className={styles.subtitle}>
           Craft your perfect adventure in seconds
         </p>
       </header>
+      {/* Buttons toggle login/register modals */}
       <div className={styles.ctaGroup}>
         <Button
           variant="primary"
@@ -37,14 +39,14 @@ export default function Landing() {
         </Button>
       </div>
 
-      {/* מודל התחברות */}
+      {/* Login modal */}
       {showLogin && (
         <Modal onClose={() => setShowLogin(false)}>
           <Login embedded onSuccess={() => setShowLogin(false)} />
         </Modal>
       )}
 
-      {/* מודל הרשמה */}
+      {/* Registration modal */}
       {showRegister && (
         <Modal onClose={() => setShowRegister(false)}>
           <Register

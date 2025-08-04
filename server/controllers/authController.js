@@ -1,7 +1,7 @@
-// server/controllers/authController.js
 import jwt from "jsonwebtoken";
 import * as userSvc from "../services/userService.js";
 
+// Handle user registration
 export async function register(req, res, next) {
   try {
     await userSvc.register(req.body);
@@ -11,6 +11,7 @@ export async function register(req, res, next) {
   }
 }
 
+// Handle user login, return JWT + public user info
 export async function login(req, res, next) {
   try {
     const user = await userSvc.login(req.body);
@@ -25,7 +26,7 @@ export async function login(req, res, next) {
   }
 }
 
+// Stateless logout – client just discards token
 export function logout(req, res) {
-  // Stateless JWT — אין פעולות בצד־שרת
   res.json({ message: "Logged out" });
 }

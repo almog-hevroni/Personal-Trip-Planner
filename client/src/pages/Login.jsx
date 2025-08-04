@@ -16,6 +16,7 @@ export default function Login({ embedded = false, onSuccess }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  // On submit, authenticate and store token/user in context + localStorage
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {

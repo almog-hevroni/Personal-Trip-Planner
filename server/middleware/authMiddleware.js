@@ -1,8 +1,7 @@
-// server/middleware/authMiddleware.js
 import jwt from "jsonwebtoken";
 
 export function authenticateToken(req, res, next) {
-  // 1. קבלת הטוקן מתוך כותרת Authorization
+// Extract "Bearer <token>" header
   const authHeader = req.headers.authorization || ""; // "Bearer <token>"
   const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
 
@@ -11,11 +10,10 @@ export function authenticateToken(req, res, next) {
   }
 
   try {
-    // 2. אימות הטוקן (מפעיל גם בדיקת החתימה ותוקף הזמן)
+   // Verify signature & expiry
     const payload = jwt.verify(token, process.env.JWT_SECRET);
-    // 3. אם תקין, שמירת הנתונים מ־payload ב־req.user
+   // Attach decoded payload (userId, name) to request
     req.user = payload;
-    // 4. קריאה לפונקציית next() כדי להמשיך ל־route הבא
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid or expired token" });

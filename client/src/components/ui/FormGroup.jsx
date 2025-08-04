@@ -1,4 +1,3 @@
-import React from "react";
 import "../../styles/components/form.css";
 
 export default function FormGroup({ label, children, required = false }) {

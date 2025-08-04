@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -77,7 +77,7 @@ function RoutingLine({ points }) {
 export default function Map({ points = [], type }) {
   const center = points[0] || { lat: 32.08, lng: 34.78 };
 
-  // בדיקה כללית: האם נקודת התחלה = נקודת סיום? אם כן – חותכים את הסיום (כדי שלא תופיע פעמיים)
+  // Check if point are the same, if yes, cut the last one.
   const displayPoints =
     points.length > 1 &&
     points[0].lat === points[points.length - 1].lat &&

@@ -14,7 +14,7 @@ export default function Register({ embedded = false, onSuccess }) {
   const [password, setPassword] = useState("");
   const api = useApi();
   const nav = useNavigate();
-
+// Handle form submit -> backend registration
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
