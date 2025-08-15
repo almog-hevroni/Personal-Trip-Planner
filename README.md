@@ -12,7 +12,7 @@ Trip Planner is an innovative travel planning platform that transforms location 
 
 ## 🎬 Live Demo
 
-📹 **[Watch Demo Video](https://your-video-url.com)**
+📹 **[Watch Demo Video](https://github.com/almog-hevroni/Personal-Trip-Planner/releases/download/v1-demo/Trip.Demo.Video.mp4)**
 
 _Experience the complete flow:_
 
