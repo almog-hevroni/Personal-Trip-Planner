@@ -1,4 +1,3 @@
-/* איפוס מרג'ין/פדינג ברירת מחדל */
 *,
 *::before,
 *::after {
@@ -7,7 +6,6 @@
   padding: 0;
 }
 
-/* טיפוגרפיה בסיסית */
 html,
 body {
   font-family: var(--font-base);
@@ -17,10 +15,9 @@ body {
   color: var(--clr-text-dark);
   min-width: 320px;
   min-height: 100vh;
-  overflow-x: hidden; /* ← הפתרון */
+  overflow-x: hidden;
 }
 
-/* קישורים */
 a {
   font-weight: 500;
   color: var(--clr-primary);

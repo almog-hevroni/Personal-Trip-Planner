@@ -80,15 +80,13 @@
   margin-top: 1rem;
 }
 
-/* --------------------------------------- */
-/* אזור גיבור (Hero) עם תמונה וכותרת מעליה */
 .hero {
   position: relative;
-  width: 80%; /* תקבע רוחב ביחס לרוחב הדף */
-  max-width: 1400px; /* מקסימום רוחב קבוע */
-  aspect-ratio: 20 / 8; /* יחס רוחב־גובה 4:3 (גבוה יותר) */
+  width: 80%;
+  max-width: 1400px;
+  aspect-ratio: 20 / 8;
   overflow: hidden;
-  margin: 0 auto 1.5rem; /* מרכז אופקית + ריווח מתחת */
+  margin: 0 auto 1.5rem;
 }
 
 .heroImage {
@@ -100,8 +98,8 @@
 
 .heroTitle {
   position: absolute;
-  bottom: 16px; /* מיקום בתחתית */
-  left: 16px; /* ליפה */
+  bottom: 16px;
+  left: 16px;
   margin: 0;
   color: #ffffff;
   font-size: 3rem;

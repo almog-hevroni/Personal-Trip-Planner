@@ -5,14 +5,14 @@ export default function Button({
   onClick,
   variant = "primary",
   type = "button",
-  className = "", // ✅ קלט חדש
+  className = "",
 }) {
   const base = "btn";
   const style = variant === "primary" ? "btn-primary" : "btn-secondary";
   return (
     <button
       type={type}
-      className={`${base} ${style} ${className}`} // ✅ הוספנו את className החיצוני
+      className={`${base} ${style} ${className}`}
       onClick={onClick}
     >
       {children}

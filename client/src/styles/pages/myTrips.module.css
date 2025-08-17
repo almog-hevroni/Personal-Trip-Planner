@@ -28,7 +28,7 @@
 
 .heading {
   font-size: 3rem;
-  color: #5c6ac4; /* primary purple */
+  color: #5c6ac4;
   margin-bottom: 2.5rem;
   text-align: center;
 }
@@ -44,7 +44,7 @@
 .card {
   background: #fafafa;
   border: 1px solid #e2e2e2;
-  border-radius: 1rem; /* rounded corners */
+  border-radius: 1rem;
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
   padding: 2rem;
   display: flex;
@@ -54,12 +54,12 @@
 .card h2 {
   font-size: 1.25rem; /* medium heading size */
   margin-bottom: 0.75rem;
-  color: #333333; /* dark text */
+  color: #333333;
 }
 
 .card p {
   flex-grow: 1;
-  color: #555555; /* regular text */
+  color: #555555;
   margin-bottom: 1.25rem;
 }
 
@@ -90,7 +90,6 @@
   margin-top: auto;
 }
 
-/* 2. כפתור trash ללא רקע, צבע אדום */
 .trashButton {
   background: transparent;
   border: none;
@@ -99,7 +98,6 @@
   padding: 0.25rem;
 }
 
-/* 3. overlay חצי שקוף למודאל */
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -113,7 +111,6 @@
   z-index: 1000;
 }
 
-/* 4. תיבת המודאל */
 .modal {
   background: #ffffff;
   padding: 2rem;
@@ -123,7 +120,6 @@
   text-align: center;
 }
 
-/* 5. סידור כפתורי המודאל */
 .modalButtons {
   display: flex;
   justify-content: space-around;

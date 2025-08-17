@@ -30,16 +30,14 @@ const tripSchema = new Schema(
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     title: { type: String, trim: true, required: true },
     type: { type: String, enum: ["bike", "trek"], required: true },
-    description: { type: String, trim: true, default: "" }, // תיאור קצר למסלול
+    description: { type: String, trim: true, default: "" },
     location: { type: String, trim: true, required: true },
 
-    // השדות החדשים:
     startingPoint: { type: String, required: true },
     endingPoint: { type: String, required: true },
     totalLengthKm: { type: Number, required: true },
     days: { type: [dayDetailSchema], default: [] },
 
-    // שדות קיימים (route ו-points), משודרגים בהתאם:
     route: { type: [geoPointSchema], default: [] },
     imageUrl: { type: String },
   },
