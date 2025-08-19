@@ -24,20 +24,20 @@ export default function HistoryTripDetails() {
 
   // Fetch trip by ID on mount
   useEffect(() => {
-    let isMounted = true;
+    // let isMounted = true;
     async function fetchTrip() {
       try {
         const { data } = await api.get(`/trips/${tripId}`);
-        if (!isMounted) return;
+        // if (!isMounted) return;
         setTrip(data);
       } catch {
         window.alert("Error fetching trip.");
       }
     }
     fetchTrip();
-    return () => {
-      isMounted = false;
-    };
+    // return () => {
+    //   // isMounted = false;
+    // };
   }, [tripId, api]);
 
   return (
